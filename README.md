@@ -1,438 +1,470 @@
-# Dress by Ameksa
+<div align="center">
 
-## Projet Fil Rouge – Plateforme de location de caftans et takchitas
+# 🌸 Dress by Ameksa
 
----
+### ✨ Plateforme de location de caftans et takchitas ✨
 
-## 1. Présentation du projet
+[![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)](https://mongodb.com)
+[![Express.js](https://img.shields.io/badge/Express.js-404D59?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com)
+[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org)
+[![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org)
 
-**Dress by Ameksa** est une plateforme web innovante dédiée à la location de caftans, takchitas et robes de soirée.
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
+[![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens)](https://jwt.io)
+[![Cloudinary](https://img.shields.io/badge/Cloudinary-3448C5?style=for-the-badge&logo=cloudinary&logoColor=white)](https://cloudinary.com)
 
-Elle permet aux utilisatrices de :
-- Rechercher une tenue
-- Consulter les détails
-- Tester virtuellement la tenue grâce à un module **3D Try-On basé sur IA**
-- Finaliser une réservation en ligne
+<br/>
 
-Ce projet vise à moderniser le modèle traditionnel de location de tenues au Maroc.
+![Status](https://img.shields.io/badge/Status-En%20Développement-yellow?style=flat-square)
+![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)
+![Version](https://img.shields.io/badge/Version-1.0.0-green?style=flat-square)
 
----
+<br/>
 
-## 2. Objectifs du projet
+**🇲🇦 Moderniser la location de tenues traditionnelles marocaines**
 
-### Objectif général
-Développer une plateforme complète permettant la visualisation, le test virtuel, la réservation et la gestion des tenues.
+[Démo](#-demo) • [Fonctionnalités](#-fonctionnalités) • [Installation](#-installation) • [Documentation](#-documentation)
 
-### Objectifs spécifiques
-- Mettre en place un catalogue structuré et filtré
-- Permettre la consultation détaillée de chaque tenue
-- Intégrer une fonctionnalité **3D Try-On** utilisant l'IA
-- Proposer une réservation sécurisée avec paiement
-- Offrir un espace client pour gérer les réservations
-- Fournir un espace vendeur pour gérer sa boutique
-- Fournir un espace administrateur complet
-- Assurer une expérience fluide, intuitive et responsive
+</div>
 
 ---
 
-## 3. Public cible
+## 📖 À propos
 
-- **Clientes** : Femmes recherchant une tenue pour un événement (mariage, fiançailles, soirée, henné…)
-- **Vendeurs** : Boutiques ou créatrices souhaitant proposer leurs modèles sur la plateforme
-- **Administrateurs** : Gestionnaires de la plateforme
+**Dress by Ameksa** est une plateforme web innovante qui révolutionne la location de **caftans**, **takchitas** et **robes de soirée** au Maroc.
 
----
+<table>
+<tr>
+<td width="50%">
 
-## 4. Acteurs du système
+### 🎯 Notre Mission
 
-### 4.1 Acteurs Principaux
+Connecter les **clientes** à la recherche de la tenue parfaite avec les **boutiques** proposant les plus beaux modèles traditionnels marocains.
 
-| Acteur | Description | Authentification |
-|--------|-------------|------------------|
-| **Visiteur** | Utilisateur non connecté qui consulte le site | Non requise |
-| **Client** | Utilisatrice inscrite qui réserve des tenues | Requise (JWT) |
-| **Vendeur** | Propriétaire de boutique qui gère ses tenues | Requise (JWT) |
-| **Admin** | Gestionnaire de la plateforme | Requise (JWT) |
+</td>
+<td width="50%">
 
-### 4.2 Acteurs Secondaires (Systèmes externes)
+### 💡 Innovation
 
-| Acteur | Description |
-|--------|-------------|
-| **API Gemini** | Service IA pour la génération d'images 3D Try-On |
-| **Service Email** | Envoi de notifications et confirmations |
-| **Service Paiement** | Traitement des transactions |
-| **Cloudinary** | Stockage et gestion des images |
+Grâce à notre technologie **3D Try-On basée sur l'IA**, visualisez la tenue sur vous avant de réserver !
+
+</td>
+</tr>
+</table>
 
 ---
 
-## 5. Périmètre fonctionnel
+## ⭐ Fonctionnalité Phare : Try-On 3D avec IA
 
-### 5.1 Espace Visiteur (Sans authentification)
+<div align="center">
 
-#### Page d'accueil
-- Présentation du concept Dress by Ameksa
-- Mise en avant des modèles populaires ou nouveaux
-- Accès rapide au catalogue
-
-#### Catalogue des tenues
-- Filtration par : type (caftan, takchita, robe), couleur, prix, taille, disponibilité
-- Recherche par mot-clé
-- Pagination des résultats
-
-#### Détails d'une tenue
-- Photos haute qualité
-- Description complète
-- Taille disponible
-- Prix de location
-- Disponibilité par date
-- Suggestions de modèles similaires
-
-#### Consultation boutique
-- Voir les informations d'une boutique
-- Parcourir les tenues d'une boutique
-
-#### Inscription / Connexion
-- Créer un compte (Client ou Vendeur)
-- Se connecter à son espace
-
----
-
-### 5.2 Espace Client (Authentification requise)
-
-#### Try-On 3D — Fonctionnalité IA (Fonctionnalité majeure)
-
-**Objectif :** Permettre à l'utilisatrice de visualiser virtuellement la tenue choisie sur son avatar 3D généré automatiquement via IA.
-
-**Fonctionnement :**
-1. L'utilisatrice choisit un modèle (caftan / takchita)
-2. Elle ouvre le bouton "Essayer en 3D"
-3. Elle remplit un formulaire :
-   - Taille (cm)
-   - Poids (kg)
-   - Couleur de peau
-   - Morphologie (fine / moyenne / ronde)
-   - Option : upload d'une photo (pour ressemblance)
-4. Le système construit une prompt dynamique
-5. L'API Gemini (IA Image Generation) génère :
-   - Une image 3D réaliste
-   - Avec la tenue sélectionnée, adaptée à la morphologie
-6. L'utilisatrice peut :
-   - Télécharger le rendu 3D
-   - Tester plusieurs tenues
-   - Continuer vers la réservation
-
-**Contraintes :**
-- Ne pas utiliser Three.js
-- Utiliser une prompt IA + API Gemini pour générer le rendu réaliste
-- Protection et suppression des images envoyées
-
-#### Système de réservation
-- Sélection des dates (début/fin)
-- Vérification automatique de la disponibilité
-- Formulaire d'informations personnelles
-- Paiement sécurisé
-- Confirmation de réservation + email
-
-#### Espace client
-- Gestion du profil
-- Historique des réservations
-- Statut des réservations : en attente / confirmée / en cours / rendue
-- Réception des notifications
-
----
-
-### 5.3 Espace Vendeur (Authentification requise)
-
-#### Gestion de la boutique
-- Créer et configurer sa boutique
-- Modifier les informations (nom, description, logo, adresse, contact)
-- Consulter le statut de validation
-
-#### Gestion des tenues
-- **Ajouter** une nouvelle tenue
-  - Nom, description, type, couleur
-  - Tailles disponibles
-  - Prix de location
-  - Upload d'images (via Cloudinary)
-- **Modifier** une tenue existante
-- **Supprimer** une tenue
-- Définir la disponibilité
-
-#### Gestion des réservations
-- Voir toutes les réservations de sa boutique
-- **Confirmer** ou **refuser** une réservation
-- **Marquer** une tenue comme rendue
-- Gérer les conflits de dates
-
-#### Statistiques boutique
-- Nombre de réservations
-- Tenues les plus demandées
-- Revenus générés
-- Suivi des performances
-
----
-
-### 5.4 Espace Admin (Authentification requise)
-
-#### Gestion des boutiques
-- Voir toutes les boutiques (en attente, validées, suspendues)
-- **Valider** une nouvelle boutique
-- **Suspendre** une boutique
-- Consulter les détails d'une boutique
-
-#### Gestion des utilisateurs
-- Liste des clients, vendeurs et admins
-- Création de nouveaux admins
-- Désactivation/Activation de comptes
-
-#### Supervision des réservations
-- Voir toutes les réservations de la plateforme
-- Gérer les litiges entre clients et vendeurs
-- Archivage des réservations terminées
-
-#### Tableau de bord
-- Nombre de réservations / mois
-- Revenus estimés de la plateforme
-- Modèles les plus demandés
-- Statistiques par boutique
-- Gestion des commissions
-
----
-
-## 6. Contraintes techniques
-
-### Stack MERN
-| Composant | Technologie |
-|-----------|-------------|
-| **Frontend** | React.js + Tailwind CSS |
-| **Backend** | Node.js + Express.js |
-| **Base de données** | MongoDB |
-| **Authentification** | JWT + bcrypt |
-| **Upload images** | Multer + Cloudinary |
-| **Versioning** | GitHub |
-| **Design** | Figma / Canva |
-| **IA Try-On 3D** | API Gemini + Prompt Engineering |
-
----
-
-## 7. Contraintes ergonomiques
-
-- Interface **responsive** (mobile-first)
-- Navigation fluide et intuitive
-- Visuels attractifs (tenues mises en valeur)
-- Performances optimisées
-- Interface d'essayage 3D accessible et simple
-
----
-
-## 8. Arborescence du site
-
-### Front-office (Public)
 ```
-├── Accueil
-├── Catalogue
-│   ├── Filtres
-│   └── Recherche
-├── Détails tenue
-├── Boutiques
-│   └── Détails boutique
-├── Contact
-└── Connexion / Inscription
+┌─────────────────────────────────────────────────────────────────┐
+│                    🪄 ESSAYAGE VIRTUEL 3D                       │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│   1️⃣  Choisissez une tenue (caftan/takchita)                   │
+│                           ↓                                     │
+│   2️⃣  Remplissez le formulaire morphologique                   │
+│       • Taille (cm)  • Poids (kg)                              │
+│       • Couleur de peau  • Morphologie                         │
+│                           ↓                                     │
+│   3️⃣  L'IA Gemini génère votre avatar 3D                      │
+│                           ↓                                     │
+│   4️⃣  Visualisez la tenue sur VOUS !                          │
+│                           ↓                                     │
+│   5️⃣  Téléchargez ou réservez directement                     │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-### Espace Client
-```
-├── Try-On 3D
-├── Réservation
-├── Mon Profil
-├── Mes Réservations
-└── Mes Notifications
-```
+</div>
 
-### Espace Vendeur
-```
-├── Ma Boutique
-│   └── Modifier infos
-├── Mes Tenues
-│   ├── Ajouter
-│   ├── Modifier
-│   └── Supprimer
-├── Réservations
-│   ├── En attente
-│   ├── Confirmées
-│   └── Historique
-└── Statistiques
-```
+---
 
-### Back-office (Admin)
+## 👥 Acteurs du Système
+
+<div align="center">
+
+| | Acteur | Description | Auth |
+|:---:|:---|:---|:---:|
+| 👁️ | **Visiteur** | Consulte le catalogue sans compte | ❌ |
+| 👗 | **Client** | Réserve des tenues, utilise Try-On 3D | ✅ |
+| 🏪 | **Vendeur** | Gère sa boutique et ses tenues | ✅ |
+| 👑 | **Admin** | Supervise toute la plateforme | ✅ |
+
+</div>
+
+### 🔗 Systèmes Externes
+
 ```
-├── Tableau de bord
-├── Boutiques
-│   ├── En attente
-│   ├── Validées
-│   └── Suspendues
-├── Utilisateurs
-│   ├── Clients
-│   ├── Vendeurs
-│   └── Admins
-├── Réservations
-└── Commissions
+┌──────────────┐    ┌──────────────┐    ┌──────────────┐    ┌──────────────┐
+│  🤖 Gemini   │    │  📧 Email    │    │  💳 Paiement │    │  ☁️ Cloudinary│
+│   API IA     │    │   Service    │    │   Service    │    │   Images     │
+└──────────────┘    └──────────────┘    └──────────────┘    └──────────────┘
 ```
 
 ---
 
-## 9. Diagrammes UML
+## 🎨 Fonctionnalités
 
-Les diagrammes UML du projet sont disponibles dans les fichiers suivants :
+<details>
+<summary><b>👁️ Espace Visiteur</b> (Sans authentification)</summary>
 
-| Diagramme | Fichier |
-|-----------|---------|
-| Diagramme de Classe | `diagramme-classe-dressByAmeksa.drawio` |
-| Diagramme de Cas d'Utilisation | `diagramme-cas-utilisation-dressByAmeksa.drawio` |
+<br/>
 
-### Résumé du Diagramme de Classe
+| Fonctionnalité | Description |
+|:---|:---|
+| 🏠 Page d'accueil | Découverte du concept, modèles populaires |
+| 📚 Catalogue | Parcourir toutes les tenues disponibles |
+| 🔍 Recherche | Filtrer par type, couleur, prix, taille |
+| 👀 Détails tenue | Photos HD, description, disponibilité |
+| 🏪 Boutiques | Consulter les boutiques partenaires |
+| 📝 Inscription | Créer un compte Client ou Vendeur |
+
+</details>
+
+<details>
+<summary><b>👗 Espace Client</b> (Authentification requise)</summary>
+
+<br/>
+
+| Fonctionnalité | Description |
+|:---|:---|
+| 🪄 **Try-On 3D** | Essayage virtuel avec IA Gemini |
+| 📅 Réservation | Sélection dates + paiement sécurisé |
+| 👤 Profil | Gérer ses informations personnelles |
+| 📋 Historique | Voir toutes ses réservations |
+| 🔔 Notifications | Recevoir les confirmations par email |
+
+</details>
+
+<details>
+<summary><b>🏪 Espace Vendeur</b> (Authentification requise)</summary>
+
+<br/>
+
+| Fonctionnalité | Description |
+|:---|:---|
+| 🏬 Ma Boutique | Créer et configurer sa boutique |
+| ➕ Ajouter tenue | Nom, description, prix, images |
+| ✏️ Modifier tenue | Mettre à jour les informations |
+| 🗑️ Supprimer tenue | Retirer une tenue du catalogue |
+| 📊 Réservations | Confirmer/Refuser les demandes |
+| 📈 Statistiques | Performances de la boutique |
+
+</details>
+
+<details>
+<summary><b>👑 Espace Admin</b> (Authentification requise)</summary>
+
+<br/>
+
+| Fonctionnalité | Description |
+|:---|:---|
+| ✅ Valider boutiques | Approuver les nouvelles boutiques |
+| 🚫 Suspendre | Désactiver une boutique problématique |
+| 👥 Utilisateurs | Gérer clients, vendeurs, admins |
+| 📊 Dashboard | Statistiques globales de la plateforme |
+| 💰 Commissions | Gérer les revenus et commissions |
+| ⚖️ Litiges | Résoudre les conflits |
+
+</details>
+
+---
+
+## 🏗️ Architecture du Projet
 
 ```
-Utilisateur (classe parent)
-    ├── Client (hérite)
-    ├── Vendeur (hérite)
-    └── Admin (hérite)
-
-Vendeur ──possède──► Boutique (1:1)
-Boutique ──contient──► Tenue (1:*)
-Client ──effectue──► Reservation (1:*)
-Tenue ──concerne──► Reservation (1:*)
-Reservation ──génère──► Paiement (1:0..1)
-Client ──utilise──► TryOn3D (1:*)
+dress-by-ameksa/
+│
+├── 📁 frontend/                 # Application React
+│   ├── 📁 src/
+│   │   ├── 📁 components/       # Composants réutilisables
+│   │   ├── 📁 pages/            # Pages de l'application
+│   │   │   ├── 📁 public/       # Accueil, Catalogue, Détails
+│   │   │   ├── 📁 client/       # Espace Client
+│   │   │   ├── 📁 vendeur/      # Espace Vendeur
+│   │   │   └── 📁 admin/        # Espace Admin
+│   │   ├── 📁 context/          # Context API (Auth, Cart)
+│   │   ├── 📁 hooks/            # Custom Hooks
+│   │   ├── 📁 services/         # Appels API
+│   │   └── 📁 utils/            # Fonctions utilitaires
+│   └── 📄 package.json
+│
+├── 📁 backend/                  # Serveur Node.js/Express
+│   ├── 📁 controllers/          # Logique métier
+│   ├── 📁 models/               # Schémas MongoDB
+│   │   ├── 📄 User.js           # Utilisateur (parent)
+│   │   ├── 📄 Client.js
+│   │   ├── 📄 Vendeur.js
+│   │   ├── 📄 Admin.js
+│   │   ├── 📄 Boutique.js
+│   │   ├── 📄 Tenue.js
+│   │   ├── 📄 Reservation.js
+│   │   └── 📄 TryOn.js
+│   ├── 📁 routes/               # Routes API
+│   ├── 📁 middleware/           # Auth, Validation
+│   ├── 📁 config/               # Configuration DB
+│   └── 📄 server.js
+│
+├── 📁 docs/                     # Documentation
+│   ├── 📄 diagramme-classe.drawio
+│   └── 📄 diagramme-cas-utilisation.drawio
+│
+└── 📄 README.md
 ```
 
-### Résumé du Diagramme de Cas d'Utilisation
+---
 
-**Visiteur (sans auth)** : Consulter accueil, Parcourir catalogue, Voir détails, S'inscrire, Se connecter
+## 🗃️ Modèle de Données
 
-**Client (auth requise)** : Try-On 3D, Réserver, Payer, Gérer profil, Historique
+```mermaid
+erDiagram
+    UTILISATEUR ||--o| CLIENT : "est un"
+    UTILISATEUR ||--o| VENDEUR : "est un"
+    UTILISATEUR ||--o| ADMIN : "est un"
 
-**Vendeur (auth requise)** : Gérer boutique, Gérer tenues, Gérer réservations, Statistiques
+    VENDEUR ||--|| BOUTIQUE : "possède"
+    BOUTIQUE ||--o{ TENUE : "contient"
 
-**Admin (auth requise)** : Gérer boutiques, Gérer utilisateurs, Superviser réservations, Tableau de bord
+    CLIENT ||--o{ RESERVATION : "effectue"
+    TENUE ||--o{ RESERVATION : "concerne"
+    RESERVATION ||--o| PAIEMENT : "génère"
+
+    CLIENT ||--o{ TRYON3D : "utilise"
+    TENUE ||--o{ TRYON3D : "essayée via"
+```
+
+### 📊 Classes Principales
+
+<div align="center">
+
+| Classe | Attributs clés |
+|:---:|:---|
+| 👤 **Utilisateur** | `_id`, `nom`, `email`, `motDePasse`, `role` |
+| 👗 **Client** | `favoris`, `historiqueReservations` |
+| 🏪 **Vendeur** | `boutique`, `estVerifie`, `commission` |
+| 👑 **Admin** | `permissions`, `niveauAcces` |
+| 🏬 **Boutique** | `nom`, `logo`, `adresse`, `statut` |
+| 👘 **Tenue** | `nom`, `type`, `prix`, `images`, `disponibilite` |
+| 📅 **Reservation** | `dateDebut`, `dateFin`, `statut`, `prixTotal` |
+| 🪄 **TryOn3D** | `taille`, `poids`, `morphologie`, `imageGeneree` |
+
+</div>
 
 ---
 
-## 10. Planning prévisionnel
+## 🛠️ Stack Technique
 
-Gestion via **Jira** (sprints) :
+<div align="center">
 
-| Sprint | Description |
-|--------|-------------|
-| Sprint 1 | Maquettes & architecture |
-| Sprint 2 | Front catalogue + détails |
-| Sprint 3 | Backend utilisateurs + tenues |
-| Sprint 4 | Réservation + disponibilité |
-| Sprint 5 | Espace Vendeur |
-| Sprint 6 | Admin panel |
-| Sprint 7 | Intégration Try-On 3D |
-| Sprint 8 | Tests & optimisation |
-| Sprint 9 | Rapport + présentation |
+### Frontend
+![React](https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react)
+![Tailwind](https://img.shields.io/badge/Tailwind-3.0-38B2AC?style=flat-square&logo=tailwind-css)
+![Axios](https://img.shields.io/badge/Axios-1.x-5A29E4?style=flat-square&logo=axios)
 
----
+### Backend
+![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=flat-square&logo=node.js)
+![Express](https://img.shields.io/badge/Express-4.x-000000?style=flat-square&logo=express)
+![MongoDB](https://img.shields.io/badge/MongoDB-6.0-47A248?style=flat-square&logo=mongodb)
 
-## 11. Livrables
+### Services
+![Cloudinary](https://img.shields.io/badge/Cloudinary-Images-3448C5?style=flat-square&logo=cloudinary)
+![Gemini](https://img.shields.io/badge/Gemini-AI%20API-4285F4?style=flat-square&logo=google)
+![JWT](https://img.shields.io/badge/JWT-Auth-000000?style=flat-square&logo=jsonwebtokens)
 
-- [x] Cahier des charges final
-- [ ] Maquettes UI/UX
-- [ ] Code source complet
-- [ ] Base de données
-- [ ] Documentation API
-- [ ] Rapport final
-- [ ] Présentation PowerPoint
+</div>
 
 ---
 
-## 12. Sécurité
-
-### Authentification & Autorisation
-- **JWT** (JSON Web Tokens) pour la gestion des sessions
-- **bcrypt** pour le hashage des mots de passe
-- Middleware de vérification des rôles (Client, Vendeur, Admin)
-
-### Protection des données
-- Validation des entrées utilisateur
-- Protection contre les injections (SQL, NoSQL)
-- HTTPS obligatoire en production
-- Suppression automatique des images uploadées (Try-On)
-
----
-
-## 13. Conclusion
-
-**Dress by Ameksa** est une solution moderne et innovante qui révolutionne la location de caftans et takchitas au Maroc.
-
-Grâce à sa fonctionnalité exclusive **3D Try-On basée sur l'IA**, la plateforme offre une expérience unique permettant aux utilisatrices de visualiser la tenue sur elles avant de réserver.
-
-Le système multi-acteurs (Visiteur, Client, Vendeur, Admin) permet une gestion complète de l'écosystème de location de tenues traditionnelles.
-
-C'est un projet ambitieux, complet et parfaitement adapté pour un projet de fin d'études professionnel.
-
----
-
-## 14. Installation et Démarrage
+## 🚀 Installation
 
 ### Prérequis
-- Node.js (v18+)
-- MongoDB
-- Compte Cloudinary
-- Clé API Gemini
 
-### Installation
+- ![Node.js](https://img.shields.io/badge/Node.js-v18+-green?style=flat-square)
+- ![MongoDB](https://img.shields.io/badge/MongoDB-v6+-green?style=flat-square)
+- Compte [Cloudinary](https://cloudinary.com)
+- Clé API [Gemini](https://ai.google.dev)
+
+### 📥 Cloner le projet
 
 ```bash
-# Cloner le projet
-git clone <url-du-repo>
-
-# Installer les dépendances backend
-cd backend
-npm install
-
-# Installer les dépendances frontend
-cd ../frontend
-npm install
+git clone https://github.com/votre-username/dress-by-ameksa.git
+cd dress-by-ameksa
 ```
 
-### Configuration
+### ⚙️ Configuration Backend
 
-Créer un fichier `.env` dans le dossier backend :
+```bash
+# Aller dans le dossier backend
+cd backend
+
+# Installer les dépendances
+npm install
+
+# Créer le fichier .env
+cp .env.example .env
+```
+
+Configurer le fichier `.env` :
 
 ```env
+# Serveur
 PORT=5000
+NODE_ENV=development
+
+# Base de données
 MONGODB_URI=mongodb://localhost:27017/dressByAmeksa
-JWT_SECRET=votre_secret_jwt
+
+# Authentification
+JWT_SECRET=votre_secret_jwt_super_securise
+JWT_EXPIRE=7d
+
+# Cloudinary
 CLOUDINARY_CLOUD_NAME=votre_cloud_name
 CLOUDINARY_API_KEY=votre_api_key
 CLOUDINARY_API_SECRET=votre_api_secret
+
+# Gemini AI
 GEMINI_API_KEY=votre_cle_gemini
+
+# Email (optionnel)
+EMAIL_SERVICE=gmail
+EMAIL_USER=votre_email
+EMAIL_PASS=votre_mot_de_passe_app
 ```
 
-### Démarrage
+### ⚙️ Configuration Frontend
 
 ```bash
-# Démarrer le backend
+# Aller dans le dossier frontend
+cd ../frontend
+
+# Installer les dépendances
+npm install
+
+# Créer le fichier .env
+cp .env.example .env
+```
+
+```env
+REACT_APP_API_URL=http://localhost:5000/api
+```
+
+### ▶️ Démarrer l'application
+
+```bash
+# Terminal 1 - Backend
 cd backend
 npm run dev
 
-# Démarrer le frontend
+# Terminal 2 - Frontend
 cd frontend
 npm start
 ```
 
+<div align="center">
+
+🎉 **L'application est accessible sur** `http://localhost:3000`
+
+</div>
+
 ---
 
-## Auteur
+## 📅 Planning de Développement
 
-**Projet Fil Rouge** - Formation Développement Web Full Stack
+<div align="center">
+
+| Sprint | Description | Durée |
+|:---:|:---|:---:|
+| 1️⃣ | Maquettes UI/UX & Architecture | 1 sem |
+| 2️⃣ | Frontend : Catalogue + Détails | 1 sem |
+| 3️⃣ | Backend : Auth + Tenues | 1 sem |
+| 4️⃣ | Système de Réservation | 1 sem |
+| 5️⃣ | **Espace Vendeur** | 1 sem |
+| 6️⃣ | Panel Admin | 1 sem |
+| 7️⃣ | **Try-On 3D avec IA** | 2 sem |
+| 8️⃣ | Tests & Optimisation | 1 sem |
+| 9️⃣ | Documentation & Présentation | 1 sem |
+
+</div>
 
 ---
 
-*Document mis à jour le : Janvier 2026*
-#   D r e s s - B y - A m e k s a  
- #   D r e s s - B y - A m e k s a  
- 
+## 📚 Documentation
+
+| Document | Description |
+|:---|:---|
+| 📄 [Cahier des charges](./docs/cahier-des-charges.pdf) | Spécifications complètes du projet |
+| 📊 [Diagramme de classe](./diagramme-classe-dressByAmeksa.drawio) | Architecture des données |
+| 🔄 [Diagramme cas d'utilisation](./diagramme-cas-utilisation-dressByAmeksa.drawio) | Interactions utilisateurs |
+| 🎨 [Maquettes Figma](#) | Design UI/UX |
+| 📖 [API Documentation](#) | Endpoints REST |
+
+---
+
+## 🔐 Sécurité
+
+<div align="center">
+
+| Mesure | Implémentation |
+|:---:|:---|
+| 🔑 | **JWT** pour l'authentification |
+| 🔒 | **bcrypt** pour le hashage des mots de passe |
+| 🛡️ | Middleware de vérification des rôles |
+| ✅ | Validation des entrées (Joi/Express-validator) |
+| 🚫 | Protection CORS configurée |
+| 🗑️ | Suppression auto des images Try-On |
+
+</div>
+
+---
+
+## 🤝 Contribution
+
+Les contributions sont les bienvenues !
+
+```bash
+# 1. Fork le projet
+# 2. Créer une branche
+git checkout -b feature/ma-nouvelle-fonctionnalite
+
+# 3. Commit les changements
+git commit -m "feat: ajout de ma fonctionnalité"
+
+# 4. Push sur la branche
+git push origin feature/ma-nouvelle-fonctionnalite
+
+# 5. Ouvrir une Pull Request
+```
+
+---
+
+## 📄 License
+
+Ce projet est sous licence **MIT**. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
+
+---
+
+<div align="center">
+
+## 💖 Remerciements
+
+Merci à tous ceux qui contribuent à ce projet !
+
+---
+
+**Fait avec ❤️ au Maroc 🇲🇦**
+
+<br/>
+
+[![GitHub](https://img.shields.io/badge/GitHub-Repo-181717?style=for-the-badge&logo=github)](https://github.com/votre-username/dress-by-ameksa)
+
+<br/>
+
+*Projet Fil Rouge - Formation Développement Web Full Stack*
+
+*© 2026 Dress by Ameksa - Tous droits réservés*
+
+</div>
