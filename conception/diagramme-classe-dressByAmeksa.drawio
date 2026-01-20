@@ -1,0 +1,341 @@
+<mxfile host="65bd71144e">
+    <diagram name="Diagramme de Classe" id="class-diagram">
+        <mxGraphModel dx="1612" dy="1142" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1800" pageHeight="1400" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title" value="Diagramme de Classe - Dress by Ameksa" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1" parent="1" vertex="1">
+                    <mxGeometry x="550" y="20" width="500" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="user-class" value="Utilisateur" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="80" width="220" height="220" as="geometry"/>
+                </mxCell>
+                <mxCell id="user-attr" value="- _id: ObjectId&#xa;- nom: String&#xa;- prenom: String&#xa;- email: String&#xa;- motDePasse: String&#xa;- telephone: String&#xa;- adresse: String&#xa;- dateInscription: Date&#xa;- estActif: Boolean" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="user-class" vertex="1">
+                    <mxGeometry y="26" width="220" height="134" as="geometry"/>
+                </mxCell>
+                <mxCell id="user-line" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" parent="user-class" vertex="1">
+                    <mxGeometry y="160" width="220" height="8" as="geometry"/>
+                </mxCell>
+                <mxCell id="user-methods" value="+ sInscrire()&#xa;+ seConnecter()&#xa;+ seDeconnecter()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="user-class" vertex="1">
+                    <mxGeometry y="168" width="220" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="client-class" value="Client" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="360" width="220" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="client-attr" value="- favoris: Array&lt;ObjectId&gt;&#xa;- historiqueReservations: Array&#xa;- preferences: Object" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="client-class" vertex="1">
+                    <mxGeometry y="26" width="220" height="64" as="geometry"/>
+                </mxCell>
+                <mxCell id="client-line" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" parent="client-class" vertex="1">
+                    <mxGeometry y="90" width="220" height="8" as="geometry"/>
+                </mxCell>
+                <mxCell id="client-methods" value="+ reserverTenue()&#xa;+ annulerReservation()&#xa;+ voirHistorique()&#xa;+ ajouterFavori()&#xa;+ utiliserTryOn3D()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="client-class" vertex="1">
+                    <mxGeometry y="98" width="220" height="82" as="geometry"/>
+                </mxCell>
+                <mxCell id="vendeur-class" value="Vendeur (Propriétaire Boutique)" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="600" width="250" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="vendeur-attr" value="- boutique: ObjectId (ref: Boutique)&#xa;- estVerifie: Boolean&#xa;- dateVerification: Date&#xa;- commission: Number (%)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="vendeur-class" vertex="1">
+                    <mxGeometry y="26" width="250" height="74" as="geometry"/>
+                </mxCell>
+                <mxCell id="vendeur-line" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" parent="vendeur-class" vertex="1">
+                    <mxGeometry y="100" width="250" height="8" as="geometry"/>
+                </mxCell>
+                <mxCell id="vendeur-methods" value="+ gererBoutique()&#xa;+ ajouterTenue()&#xa;+ modifierTenue()&#xa;+ supprimerTenue()&#xa;+ gererReservations()&#xa;+ voirStatistiques()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="vendeur-class" vertex="1">
+                    <mxGeometry y="108" width="250" height="92" as="geometry"/>
+                </mxCell>
+                <mxCell id="admin-class" value="Admin" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="860" width="250" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="admin-attr" value="- permissions: Array&lt;String&gt;&#xa;- niveauAcces: Enum {super, normal}" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="admin-class" vertex="1">
+                    <mxGeometry y="26" width="250" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="admin-line" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" parent="admin-class" vertex="1">
+                    <mxGeometry y="70" width="250" height="8" as="geometry"/>
+                </mxCell>
+                <mxCell id="admin-methods" value="+ gererBoutiques()&#xa;+ validerBoutique()&#xa;+ susprendreBoutique()&#xa;+ gererUtilisateurs()&#xa;+ voirTableauDeBord()&#xa;+ gererCommissions()&#xa;+ genererRapports()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="admin-class" vertex="1">
+                    <mxGeometry y="78" width="250" height="122" as="geometry"/>
+                </mxCell>
+                <mxCell id="boutique-class" value="Boutique" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+                    <mxGeometry x="380" y="80" width="240" height="280" as="geometry"/>
+                </mxCell>
+                <mxCell id="boutique-attr" value="- _id: ObjectId&#xa;- nom: String&#xa;- description: String&#xa;- logo: String&#xa;- adresse: String&#xa;- ville: String&#xa;- telephone: String&#xa;- email: String&#xa;- proprietaire: ObjectId (ref: Vendeur)&#xa;- statut: Enum {en_attente, &#xa;  validee, suspendue}&#xa;- dateCreation: Date&#xa;- note: Number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="boutique-class" vertex="1">
+                    <mxGeometry y="26" width="240" height="194" as="geometry"/>
+                </mxCell>
+                <mxCell id="boutique-line" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" parent="boutique-class" vertex="1">
+                    <mxGeometry y="220" width="240" height="8" as="geometry"/>
+                </mxCell>
+                <mxCell id="boutique-methods" value="+ getTenues()&#xa;+ getStatistiques()&#xa;+ mettreAJour()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="boutique-class" vertex="1">
+                    <mxGeometry y="228" width="240" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="tenue-class" value="Tenue" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+                    <mxGeometry x="380" y="420" width="240" height="340" as="geometry"/>
+                </mxCell>
+                <mxCell id="tenue-attr" value="- _id: ObjectId&#xa;- nom: String&#xa;- description: String&#xa;- type: Enum {caftan, takchita, robe}&#xa;- couleur: String&#xa;- tailles: Array&lt;String&gt;&#xa;- prixLocation: Number&#xa;- images: Array&lt;String&gt;&#xa;- boutique: ObjectId (ref: Boutique)&#xa;- disponibilite: Boolean&#xa;- datesReservees: Array&lt;Date&gt;&#xa;- dateAjout: Date&#xa;- vues: Number&#xa;- estPopulaire: Boolean" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="tenue-class" vertex="1">
+                    <mxGeometry y="26" width="240" height="234" as="geometry"/>
+                </mxCell>
+                <mxCell id="tenue-line" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" parent="tenue-class" vertex="1">
+                    <mxGeometry y="260" width="240" height="8" as="geometry"/>
+                </mxCell>
+                <mxCell id="tenue-methods" value="+ verifierDisponibilite(dateDebut, dateFin)&#xa;+ getTenuesSimilaires()&#xa;+ mettreAJour()&#xa;+ supprimer()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="tenue-class" vertex="1">
+                    <mxGeometry y="268" width="240" height="72" as="geometry"/>
+                </mxCell>
+                <mxCell id="reservation-class" value="Reservation" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#ffe6cc;strokeColor=#d79b00;" parent="1" vertex="1">
+                    <mxGeometry x="700" y="80" width="260" height="300" as="geometry"/>
+                </mxCell>
+                <mxCell id="reservation-attr" value="- _id: ObjectId&#xa;- client: ObjectId (ref: Client)&#xa;- tenue: ObjectId (ref: Tenue)&#xa;- boutique: ObjectId (ref: Boutique)&#xa;- dateDebut: Date&#xa;- dateFin: Date&#xa;- statut: Enum {en_attente, &#xa;  confirmee, en_cours, rendue, annulee}&#xa;- prixTotal: Number&#xa;- dateReservation: Date&#xa;- notes: String" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="reservation-class" vertex="1">
+                    <mxGeometry y="26" width="260" height="174" as="geometry"/>
+                </mxCell>
+                <mxCell id="reservation-line" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" parent="reservation-class" vertex="1">
+                    <mxGeometry y="200" width="260" height="8" as="geometry"/>
+                </mxCell>
+                <mxCell id="reservation-methods" value="+ creer()&#xa;+ confirmer()&#xa;+ annuler()&#xa;+ marquerRendue()&#xa;+ calculerPrix()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="reservation-class" vertex="1">
+                    <mxGeometry y="208" width="260" height="92" as="geometry"/>
+                </mxCell>
+                <mxCell id="tryon-class" value="TryOn3D" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
+                    <mxGeometry x="380" y="820" width="240" height="290" as="geometry"/>
+                </mxCell>
+                <mxCell id="tryon-attr" value="- _id: ObjectId&#xa;- client: ObjectId (ref: Client)&#xa;- tenue: ObjectId (ref: Tenue)&#xa;- taille: Number (cm)&#xa;- poids: Number (kg)&#xa;- couleurPeau: String&#xa;- morphologie: Enum {fine, &#xa;  moyenne, ronde}&#xa;- photoUpload: String&#xa;- imageGeneree: String&#xa;- dateGeneration: Date" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="tryon-class" vertex="1">
+                    <mxGeometry y="26" width="240" height="174" as="geometry"/>
+                </mxCell>
+                <mxCell id="tryon-line" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" parent="tryon-class" vertex="1">
+                    <mxGeometry y="200" width="240" height="8" as="geometry"/>
+                </mxCell>
+                <mxCell id="tryon-methods" value="+ genererPrompt()&#xa;+ appellerAPIGemini()&#xa;+ genererImage3D()&#xa;+ telechargerRendu()&#xa;+ supprimerImage()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="tryon-class" vertex="1">
+                    <mxGeometry y="208" width="240" height="82" as="geometry"/>
+                </mxCell>
+                <mxCell id="paiement-class" value="Paiement" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1">
+                    <mxGeometry x="700" y="440" width="260" height="220" as="geometry"/>
+                </mxCell>
+                <mxCell id="paiement-attr" value="- _id: ObjectId&#xa;- reservation: ObjectId (ref)&#xa;- montant: Number&#xa;- methodePaiement: String&#xa;- statut: Enum {en_attente, &#xa;  reussi, echoue, rembourse}&#xa;- transactionId: String&#xa;- datePaiement: Date" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="paiement-class" vertex="1">
+                    <mxGeometry y="26" width="260" height="124" as="geometry"/>
+                </mxCell>
+                <mxCell id="paiement-line" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" parent="paiement-class" vertex="1">
+                    <mxGeometry y="150" width="260" height="8" as="geometry"/>
+                </mxCell>
+                <mxCell id="paiement-methods" value="+ effectuerPaiement()&#xa;+ verifierStatut()&#xa;+ rembourser()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="paiement-class" vertex="1">
+                    <mxGeometry y="158" width="260" height="62" as="geometry"/>
+                </mxCell>
+                <mxCell id="catalogue-class" value="Catalogue" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+                    <mxGeometry x="1040" y="80" width="220" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="catalogue-attr" value="- filtres: Object&#xa;- recherche: String&#xa;- page: Number&#xa;- limite: Number&#xa;- tri: String&#xa;- boutiqueFiltre: ObjectId" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="catalogue-class" vertex="1">
+                    <mxGeometry y="26" width="220" height="104" as="geometry"/>
+                </mxCell>
+                <mxCell id="catalogue-line" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" parent="catalogue-class" vertex="1">
+                    <mxGeometry y="130" width="220" height="8" as="geometry"/>
+                </mxCell>
+                <mxCell id="catalogue-methods" value="+ filtrerTenues()&#xa;+ rechercherParMotCle()&#xa;+ filtrerParBoutique()&#xa;+ paginer()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="catalogue-class" vertex="1">
+                    <mxGeometry y="138" width="220" height="62" as="geometry"/>
+                </mxCell>
+                <mxCell id="notif-class" value="Notification" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#f5f5f5;strokeColor=#666666;" parent="1" vertex="1">
+                    <mxGeometry x="1040" y="320" width="220" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="notif-attr" value="- _id: ObjectId&#xa;- destinataire: ObjectId (ref)&#xa;- type: Enum {email, systeme}&#xa;- sujet: String&#xa;- contenu: String&#xa;- estLue: Boolean&#xa;- dateEnvoi: Date" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="notif-class" vertex="1">
+                    <mxGeometry y="26" width="220" height="114" as="geometry"/>
+                </mxCell>
+                <mxCell id="notif-line" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" parent="notif-class" vertex="1">
+                    <mxGeometry y="140" width="220" height="8" as="geometry"/>
+                </mxCell>
+                <mxCell id="notif-methods" value="+ envoyerEmail()&#xa;+ marquerLue()&#xa;+ creerNotification()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="notif-class" vertex="1">
+                    <mxGeometry y="148" width="220" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="dashboard-class" value="TableauDeBord" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#b0e3e6;strokeColor=#0e8088;" parent="1" vertex="1">
+                    <mxGeometry x="1040" y="560" width="220" height="220" as="geometry"/>
+                </mxCell>
+                <mxCell id="dashboard-attr" value="- periodeDebut: Date&#xa;- periodeFin: Date&#xa;- statistiques: Object&#xa;- boutique: ObjectId (optionnel)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="dashboard-class" vertex="1">
+                    <mxGeometry y="26" width="220" height="74" as="geometry"/>
+                </mxCell>
+                <mxCell id="dashboard-line" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" parent="dashboard-class" vertex="1">
+                    <mxGeometry y="100" width="220" height="8" as="geometry"/>
+                </mxCell>
+                <mxCell id="dashboard-methods" value="+ getNombreReservations()&#xa;+ getRevenusEstimes()&#xa;+ getModelesPopulaires()&#xa;+ getSuiviTenues()&#xa;+ getStatsBoutiques()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="dashboard-class" vertex="1">
+                    <mxGeometry y="108" width="220" height="112" as="geometry"/>
+                </mxCell>
+                <mxCell id="avis-class" value="Avis" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#f5f5f5;strokeColor=#666666;" parent="1" vertex="1">
+                    <mxGeometry x="700" y="720" width="260" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="avis-attr" value="- _id: ObjectId&#xa;- client: ObjectId (ref: Client)&#xa;- boutique: ObjectId (ref: Boutique)&#xa;- tenue: ObjectId (ref: Tenue)&#xa;- note: Number (1-5)&#xa;- commentaire: String&#xa;- dateAvis: Date" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="avis-class" vertex="1">
+                    <mxGeometry y="26" width="260" height="114" as="geometry"/>
+                </mxCell>
+                <mxCell id="avis-line" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" parent="avis-class" vertex="1">
+                    <mxGeometry y="140" width="260" height="8" as="geometry"/>
+                </mxCell>
+                <mxCell id="avis-methods" value="+ creerAvis()&#xa;+ modifierAvis()&#xa;+ supprimerAvis()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="avis-class" vertex="1">
+                    <mxGeometry y="148" width="260" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="heritage-client" value="" style="endArrow=block;endSize=16;endFill=0;html=1;edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="client-class" target="user-class" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="heritage-vendeur" value="" style="endArrow=block;endSize=16;endFill=0;html=1;edgeStyle=orthogonalEdgeStyle;exitX=0;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=1;entryDx=0;entryDy=0;" parent="1" source="vendeur-class" target="user-class" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="10" y="600"/>
+                            <mxPoint x="10" y="280"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="heritage-admin" value="" style="endArrow=block;endSize=16;endFill=0;html=1;edgeStyle=orthogonalEdgeStyle;exitX=0;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="admin-class" target="user-class" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="-20" y="860"/>
+                            <mxPoint x="-20" y="180"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="rel-vendeur-boutique" value="1" style="endArrow=open;html=1;endSize=12;startArrow=diamondThin;startSize=14;startFill=1;edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=1;entryDx=0;entryDy=0;" parent="1" source="vendeur-class" target="boutique-class" edge="1">
+                    <mxGeometry x="-1" y="3" relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="330" y="650"/>
+                            <mxPoint x="330" y="360"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="rel-vendeur-boutique-label" value="possède&#xa;1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="rel-vendeur-boutique" vertex="1" connectable="0">
+                    <mxGeometry x="0.2" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="rel-boutique-tenue" value="" style="endArrow=open;html=1;endSize=12;startArrow=diamondThin;startSize=14;startFill=1;edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="boutique-class" target="tenue-class" edge="1">
+                    <mxGeometry x="-1" y="3" relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="rel-boutique-tenue-label" value="contient&#xa;1..*" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="rel-boutique-tenue" vertex="1" connectable="0">
+                    <mxGeometry x="0.2" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="rel-client-reserv" value="1" style="endArrow=open;html=1;endSize=12;startArrow=diamondThin;startSize=14;startFill=0;edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="client-class" target="reservation-class" edge="1">
+                    <mxGeometry x="-1" y="3" relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="310" y="405"/>
+                            <mxPoint x="310" y="50"/>
+                            <mxPoint x="700" y="50"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="rel-client-reserv-label" value="effectue&#xa;0..*" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="rel-client-reserv" vertex="1" connectable="0">
+                    <mxGeometry x="0.3" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="rel-tenue-reserv" value="1" style="endArrow=open;html=1;endSize=12;startArrow=diamondThin;startSize=14;startFill=0;edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;" parent="1" source="tenue-class" target="reservation-class" edge="1">
+                    <mxGeometry x="-1" y="3" relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="660" y="505"/>
+                            <mxPoint x="660" y="305"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="rel-tenue-reserv-label" value="concerne&#xa;0..*" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="rel-tenue-reserv" vertex="1" connectable="0">
+                    <mxGeometry x="0.2" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="rel-reserv-paiement" value="1" style="endArrow=open;html=1;endSize=12;startArrow=diamondThin;startSize=14;startFill=1;edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="reservation-class" target="paiement-class" edge="1">
+                    <mxGeometry x="-1" y="3" relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="rel-reserv-paiement-label" value="génère&#xa;0..1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="rel-reserv-paiement" vertex="1" connectable="0">
+                    <mxGeometry x="0.2" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="rel-client-tryon" value="1" style="endArrow=open;html=1;endSize=12;startArrow=diamondThin;startSize=14;startFill=0;edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" parent="1" source="client-class" target="tryon-class" edge="1">
+                    <mxGeometry x="-1" y="3" relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="150" y="570"/>
+                            <mxPoint x="350" y="570"/>
+                            <mxPoint x="350" y="890"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="rel-client-tryon-label" value="utilise&#xa;0..*" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="rel-client-tryon" vertex="1" connectable="0">
+                    <mxGeometry x="0.5" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="rel-tenue-tryon" value="1" style="endArrow=open;html=1;endSize=12;startArrow=diamondThin;startSize=14;startFill=0;edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="tenue-class" target="tryon-class" edge="1">
+                    <mxGeometry x="-1" y="3" relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="rel-tenue-tryon-label" value="essayée via&#xa;0..*" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="rel-tenue-tryon" vertex="1" connectable="0">
+                    <mxGeometry x="-0.2" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="rel-client-avis" value="1" style="endArrow=open;html=1;endSize=12;startArrow=diamondThin;startSize=14;startFill=0;edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="client-class" target="avis-class" edge="1">
+                    <mxGeometry x="-1" y="3" relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="310" y="495"/>
+                            <mxPoint x="310" y="820"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="rel-client-avis-label" value="rédige&#xa;0..*" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="rel-client-avis" vertex="1" connectable="0">
+                    <mxGeometry x="0.5" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="rel-admin-dashboard" value="" style="endArrow=open;html=1;endSize=12;startArrow=none;startSize=14;dashed=1;edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;" parent="1" source="admin-class" target="dashboard-class" edge="1">
+                    <mxGeometry x="-1" y="3" relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="990" y="960"/>
+                            <mxPoint x="990" y="725"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="rel-admin-dashboard-label" value="&lt;&lt;utilise&gt;&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="rel-admin-dashboard" vertex="1" connectable="0">
+                    <mxGeometry x="0.3" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="rel-vendeur-dashboard" value="" style="endArrow=open;html=1;endSize=12;startArrow=none;startSize=14;dashed=1;edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="vendeur-class" target="dashboard-class" edge="1">
+                    <mxGeometry x="-1" y="3" relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="290" y="790"/>
+                            <mxPoint x="660" y="790"/>
+                            <mxPoint x="660" y="690"/>
+                            <mxPoint x="1040" y="690"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="rel-vendeur-dashboard-label" value="&lt;&lt;utilise&gt;&gt;&#xa;(stats boutique)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="rel-vendeur-dashboard" vertex="1" connectable="0">
+                    <mxGeometry x="0.3" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="rel-catalogue-tenue" value="" style="endArrow=open;html=1;endSize=12;startArrow=diamondThin;startSize=14;startFill=1;edgeStyle=orthogonalEdgeStyle;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=1;entryY=0.25;entryDx=0;entryDy=0;" parent="1" source="catalogue-class" target="tenue-class" edge="1">
+                    <mxGeometry x="-1" y="3" relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1000" y="230"/>
+                            <mxPoint x="1000" y="670"/>
+                            <mxPoint x="620" y="670"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="rel-catalogue-tenue-label" value="affiche&#xa;0..*" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="rel-catalogue-tenue" vertex="1" connectable="0">
+                    <mxGeometry x="0.3" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="rel-admin-boutique" value="" style="endArrow=open;html=1;endSize=12;startArrow=none;startSize=14;dashed=1;edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="admin-class" target="boutique-class" edge="1">
+                    <mxGeometry x="-1" y="3" relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="165" y="830"/>
+                            <mxPoint x="340" y="830"/>
+                            <mxPoint x="340" y="220"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="rel-admin-boutique-label" value="&lt;&lt;gère&gt;&gt;&#xa;valide/suspend" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="rel-admin-boutique" vertex="1" connectable="0">
+                    <mxGeometry x="0.5" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="legend" value="Légende" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#f5f5f5;strokeColor=#666666;" parent="1" vertex="1">
+                    <mxGeometry x="1040" y="820" width="220" height="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend-content" value="△ Héritage (généralisation)&#xa;◇ Association&#xa;◆ Composition&#xa;--- &lt;&lt;utilise&gt;&gt; Dépendance&#xa;1..* Multiplicité" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="legend" vertex="1">
+                    <mxGeometry y="26" width="220" height="114" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
