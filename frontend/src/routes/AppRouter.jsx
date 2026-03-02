@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import Register from '../pages/auth/Register';
 import Login from '../pages/auth/Login';
 import Home from '../pages/public/Home';
+import Catalogue from '../pages/public/Catalogue';
 import PrivateRoute from './PrivateRoute';
 import RoleRoute from './RoleRoute';
 
@@ -10,6 +11,7 @@ const AppRouter = () => {
     <Routes>
       {/* Public routes */}
       <Route path="/" element={<Home />} />
+      <Route path="/catalogue" element={<Catalogue />} />
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login />} />
 
