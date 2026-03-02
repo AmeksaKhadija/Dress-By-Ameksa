@@ -1,6 +1,7 @@
-import { NavLink, useLocation } from 'react-router-dom';
-import { HiHome, HiShoppingBag, HiCollection, HiClipboardList, HiMenu, HiX } from 'react-icons/hi';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { HiHome, HiShoppingBag, HiCollection, HiClipboardList, HiMenu, HiX, HiLogout } from 'react-icons/hi';
 import { useState } from 'react';
+import { useAuth } from '../../hooks/useAuth';
 
 const links = [
   { to: '/vendeur/dashboard', label: 'Dashboard', icon: HiHome },
@@ -12,6 +13,13 @@ const links = [
 const VendeurLayout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -30,11 +38,11 @@ const VendeurLayout = ({ children }) => {
             sidebarOpen ? 'block' : 'hidden'
           } lg:block w-64 bg-white border-r min-h-[calc(100vh-4rem)] fixed lg:sticky top-0 lg:top-16 z-40`}
         >
-          <div className="p-6">
+          <div className="p-6 flex flex-col h-full">
             <h2 className="text-lg font-semibold text-primary-700 hidden lg:block mb-6">
               Espace Vendeur
             </h2>
-            <nav className="space-y-1">
+            <nav className="space-y-1 flex-1">
               {links.map(({ to, label, icon: Icon }) => (
                 <NavLink
                   key={to}
@@ -51,6 +59,24 @@ const VendeurLayout = ({ children }) => {
                 </NavLink>
               ))}
             </nav>
+
+            {/* User info + logout at bottom */}
+            <div className="border-t pt-4 mt-4">
+              <NavLink
+                to="#"
+                className="block text-sm font-medium text-gray-900 px-4 mb-1 hover:text-primary-600 transition"
+              >
+                {user?.nom}
+              </NavLink>
+              <p className="text-xs text-gray-500 px-4 mb-3">{user?.email}</p>
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition w-full"
+              >
+                <HiLogout size={20} />
+                Deconnexion
+              </button>
+            </div>
           </div>
         </aside>
 

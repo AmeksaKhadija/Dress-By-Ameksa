@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { HiMenu, HiX } from 'react-icons/hi';
 import { useAuth } from '../../hooks/useAuth';
 
@@ -7,6 +7,8 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isVendeurPage = location.pathname.startsWith('/vendeur');
 
   const handleLogout = () => {
     logout();
@@ -22,7 +24,7 @@ const Navbar = () => {
             🌸 Dress by Ameksa
           </Link>
 
-          {/* Desktop */}
+          {/* Desktop - center nav */}
           <div className="hidden md:flex items-center space-x-8">
             <Link to="/" className="text-gray-700 hover:text-primary-600 transition">
               Accueil
@@ -33,10 +35,13 @@ const Navbar = () => {
             <Link to="/boutiques" className="text-gray-700 hover:text-primary-600 transition">
               Boutiques
             </Link>
+          </div>
 
+          {/* Desktop - right side */}
+          <div className="hidden md:flex items-center space-x-4">
             {user ? (
-              <div className="flex items-center space-x-4">
-                {user.role === 'vendeur' && (
+              <>
+                {user.role === 'vendeur' && !isVendeurPage && (
                   <Link to="/vendeur/dashboard" className="text-primary-600 hover:text-primary-700 font-medium transition">
                     Mon Dashboard
                   </Link>
@@ -46,16 +51,22 @@ const Navbar = () => {
                     Admin
                   </Link>
                 )}
-                <span className="text-sm text-gray-500">{user.nom}</span>
-                <button
-                  onClick={handleLogout}
-                  className="text-gray-700 hover:text-primary-600 transition"
-                >
-                  Deconnexion
-                </button>
-              </div>
+                {!isVendeurPage && (
+                  <>
+                    <Link to="#" className="text-gray-700 hover:text-primary-600 transition">
+                      Profile
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="text-gray-700 hover:text-primary-600 transition"
+                    >
+                      Deconnexion
+                    </button>
+                  </>
+                )}
+              </>
             ) : (
-              <div className="flex items-center space-x-4">
+              <>
                 <Link to="/login" className="text-gray-700 hover:text-primary-600 transition">
                   Connexion
                 </Link>
@@ -65,7 +76,7 @@ const Navbar = () => {
                 >
                   Inscription
                 </Link>
-              </div>
+              </>
             )}
           </div>
 
@@ -85,14 +96,18 @@ const Navbar = () => {
             <Link to="/boutiques" className="block text-gray-700" onClick={() => setIsOpen(false)}>Boutiques</Link>
             {user ? (
               <>
-                {user.role === 'vendeur' && (
+                {user.role === 'vendeur' && !isVendeurPage && (
                   <Link to="/vendeur/dashboard" className="block text-primary-600 font-medium" onClick={() => setIsOpen(false)}>Mon Dashboard</Link>
                 )}
                 {user.role === 'admin' && (
                   <Link to="/admin/boutiques" className="block text-primary-600 font-medium" onClick={() => setIsOpen(false)}>Admin</Link>
                 )}
-                <span className="block text-sm text-gray-500">{user.nom}</span>
-                <button onClick={handleLogout} className="block text-gray-700">Deconnexion</button>
+                {!isVendeurPage && (
+                  <>
+                    <Link to="#" className="block text-gray-700" onClick={() => setIsOpen(false)}>Profile</Link>
+                    <button onClick={handleLogout} className="block text-gray-700">Deconnexion</button>
+                  </>
+                )}
               </>
             ) : (
               <>
