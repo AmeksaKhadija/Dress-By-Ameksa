@@ -1,4 +1,5 @@
 const Tenue = require('../../models/Tenue');
+const Boutique = require('../../models/Boutique');
 const Reservation = require('../../models/Reservation');
 const paginate = require('../../utils/pagination');
 
@@ -88,6 +89,39 @@ exports.getSimilarTenues = async (req, res, next) => {
       .populate('boutique', 'nom');
 
     res.json({ success: true, tenues: similar });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Get all validated boutiques
+// @route   GET /api/public/boutiques
+exports.getBoutiques = async (req, res, next) => {
+  try {
+    const boutiques = await Boutique.find({ statut: 'validee' })
+      .populate('vendeur', 'nom')
+      .sort({ createdAt: -1 });
+
+    res.json({ success: true, boutiques });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Get boutique by ID with its tenues
+// @route   GET /api/public/boutiques/:id
+exports.getBoutiqueById = async (req, res, next) => {
+  try {
+    const boutique = await Boutique.findById(req.params.id).populate('vendeur', 'nom');
+    if (!boutique) {
+      return res.status(404).json({ success: false, message: 'Boutique non trouvee' });
+    }
+
+    const tenues = await Tenue.find({ boutique: boutique._id, disponible: true })
+      .sort({ createdAt: -1 })
+      .populate('boutique', 'nom');
+
+    res.json({ success: true, boutique, tenues });
   } catch (error) {
     next(error);
   }

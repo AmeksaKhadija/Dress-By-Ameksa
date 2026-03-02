@@ -4,6 +4,8 @@ import Login from '../pages/auth/Login';
 import Home from '../pages/public/Home';
 import Catalogue from '../pages/public/Catalogue';
 import TenuDetail from '../pages/public/TenuDetail';
+import Boutiques from '../pages/public/Boutiques';
+import BoutiqueDetail from '../pages/public/BoutiqueDetail';
 import PrivateRoute from './PrivateRoute';
 import RoleRoute from './RoleRoute';
 
@@ -14,6 +16,8 @@ const AppRouter = () => {
       <Route path="/" element={<Home />} />
       <Route path="/catalogue" element={<Catalogue />} />
       <Route path="/tenue/:id" element={<TenuDetail />} />
+      <Route path="/boutiques" element={<Boutiques />} />
+      <Route path="/boutique/:id" element={<BoutiqueDetail />} />
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login />} />
 
