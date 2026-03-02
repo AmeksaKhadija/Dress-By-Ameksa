@@ -9,6 +9,12 @@ import BoutiqueDetail from '../pages/public/BoutiqueDetail';
 import PrivateRoute from './PrivateRoute';
 import RoleRoute from './RoleRoute';
 
+// Vendeur pages
+import VendeurDashboard from '../pages/vendeur/VendeurDashboard';
+import GererBoutique from '../pages/vendeur/GererBoutique';
+import GererTenues from '../pages/vendeur/GererTenues';
+import GererReservations from '../pages/vendeur/GererReservations';
+
 const AppRouter = () => {
   return (
     <Routes>
@@ -27,10 +33,13 @@ const AppRouter = () => {
           {/* Client routes - Sprint 2+ */}
         </Route>
         <Route element={<RoleRoute allowedRoles={['vendeur']} />}>
-          {/* Vendeur routes - Sprint 2+ */}
+          <Route path="/vendeur/dashboard" element={<VendeurDashboard />} />
+          <Route path="/vendeur/boutique" element={<GererBoutique />} />
+          <Route path="/vendeur/tenues" element={<GererTenues />} />
+          <Route path="/vendeur/reservations" element={<GererReservations />} />
         </Route>
         <Route element={<RoleRoute allowedRoles={['admin']} />}>
-          {/* Admin routes - Sprint 2+ */}
+          {/* Admin routes */}
         </Route>
       </Route>
 

@@ -19,7 +19,7 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           <Link to="/" className="font-serif text-2xl font-bold text-primary-700">
-            Dress by Ameksa
+            🌸 Dress by Ameksa
           </Link>
 
           {/* Desktop */}
@@ -36,6 +36,16 @@ const Navbar = () => {
 
             {user ? (
               <div className="flex items-center space-x-4">
+                {user.role === 'vendeur' && (
+                  <Link to="/vendeur/dashboard" className="text-primary-600 hover:text-primary-700 font-medium transition">
+                    Mon Dashboard
+                  </Link>
+                )}
+                {user.role === 'admin' && (
+                  <Link to="/admin/boutiques" className="text-primary-600 hover:text-primary-700 font-medium transition">
+                    Admin
+                  </Link>
+                )}
                 <span className="text-sm text-gray-500">{user.nom}</span>
                 <button
                   onClick={handleLogout}
@@ -75,6 +85,12 @@ const Navbar = () => {
             <Link to="/boutiques" className="block text-gray-700" onClick={() => setIsOpen(false)}>Boutiques</Link>
             {user ? (
               <>
+                {user.role === 'vendeur' && (
+                  <Link to="/vendeur/dashboard" className="block text-primary-600 font-medium" onClick={() => setIsOpen(false)}>Mon Dashboard</Link>
+                )}
+                {user.role === 'admin' && (
+                  <Link to="/admin/boutiques" className="block text-primary-600 font-medium" onClick={() => setIsOpen(false)}>Admin</Link>
+                )}
                 <span className="block text-sm text-gray-500">{user.nom}</span>
                 <button onClick={handleLogout} className="block text-gray-700">Deconnexion</button>
               </>
