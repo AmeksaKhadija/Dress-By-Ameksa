@@ -15,6 +15,10 @@ import GererBoutique from '../pages/vendeur/GererBoutique';
 import GererTenues from '../pages/vendeur/GererTenues';
 import GererReservations from '../pages/vendeur/GererReservations';
 
+// Client pages
+import ClientDashboard from '../pages/client/ClientDashboard';
+import Profile from '../pages/client/Profile';
+
 const AppRouter = () => {
   return (
     <Routes>
@@ -30,7 +34,8 @@ const AppRouter = () => {
       {/* Protected routes */}
       <Route element={<PrivateRoute />}>
         <Route element={<RoleRoute allowedRoles={['client']} />}>
-          {/* Client routes - Sprint 2+ */}
+          <Route path="/client/dashboard" element={<ClientDashboard />} />
+          <Route path="/client/profile" element={<Profile />} />
         </Route>
         <Route element={<RoleRoute allowedRoles={['vendeur']} />}>
           <Route path="/vendeur/dashboard" element={<VendeurDashboard />} />

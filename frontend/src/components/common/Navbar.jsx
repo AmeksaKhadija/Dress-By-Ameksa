@@ -9,6 +9,8 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const isVendeurPage = location.pathname.startsWith('/vendeur');
+  const isClientPage = location.pathname.startsWith('/client');
+  const isDashboardPage = isVendeurPage || isClientPage;
 
   const handleLogout = () => {
     logout();
@@ -46,14 +48,19 @@ const Navbar = () => {
                     Mon Dashboard
                   </Link>
                 )}
+                {user.role === 'client' && !isClientPage && (
+                  <Link to="/client/dashboard" className="text-primary-600 hover:text-primary-700 font-medium transition">
+                    Mon Espace
+                  </Link>
+                )}
                 {user.role === 'admin' && (
                   <Link to="/admin/boutiques" className="text-primary-600 hover:text-primary-700 font-medium transition">
                     Admin
                   </Link>
                 )}
-                {!isVendeurPage && (
+                {!isDashboardPage && (
                   <>
-                    <Link to="#" className="text-gray-700 hover:text-primary-600 transition">
+                    <Link to="/client/profile" className="text-gray-700 hover:text-primary-600 transition">
                       Profile
                     </Link>
                     <button
@@ -99,12 +106,15 @@ const Navbar = () => {
                 {user.role === 'vendeur' && !isVendeurPage && (
                   <Link to="/vendeur/dashboard" className="block text-primary-600 font-medium" onClick={() => setIsOpen(false)}>Mon Dashboard</Link>
                 )}
+                {user.role === 'client' && !isClientPage && (
+                  <Link to="/client/dashboard" className="block text-primary-600 font-medium" onClick={() => setIsOpen(false)}>Mon Espace</Link>
+                )}
                 {user.role === 'admin' && (
                   <Link to="/admin/boutiques" className="block text-primary-600 font-medium" onClick={() => setIsOpen(false)}>Admin</Link>
                 )}
-                {!isVendeurPage && (
+                {!isDashboardPage && (
                   <>
-                    <Link to="#" className="block text-gray-700" onClick={() => setIsOpen(false)}>Profile</Link>
+                    <Link to="/client/profile" className="block text-gray-700" onClick={() => setIsOpen(false)}>Profile</Link>
                     <button onClick={handleLogout} className="block text-gray-700">Deconnexion</button>
                   </>
                 )}
