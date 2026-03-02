@@ -30,6 +30,14 @@ const reservationSchema = new mongoose.Schema(
       required: true,
       min: 0,
     },
+    litige: {
+      type: Boolean,
+      default: false,
+    },
+    commentaireLitige: {
+      type: String,
+      trim: true,
+    },
   },
   { timestamps: true }
 );

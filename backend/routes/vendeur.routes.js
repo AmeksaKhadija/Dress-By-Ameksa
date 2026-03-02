@@ -15,6 +15,13 @@ const {
   deleteTenue,
   toggleDisponibilite,
 } = require('../controllers/vendeur/tenueController');
+const {
+  getMyReservations,
+  getMyReservationById,
+  updateReservationStatut,
+  markAsReturned,
+  handleLitige,
+} = require('../controllers/vendeur/reservationController');
 
 router.use(protect);
 router.use(authorize('vendeur'));
@@ -31,5 +38,12 @@ router.post('/tenues', uploadMultiple, createTenue);
 router.put('/tenues/:id', uploadMultiple, updateTenue);
 router.delete('/tenues/:id', deleteTenue);
 router.patch('/tenues/:id/disponibilite', toggleDisponibilite);
+
+// Reservations
+router.get('/reservations', getMyReservations);
+router.get('/reservations/:id', getMyReservationById);
+router.put('/reservations/:id/statut', updateReservationStatut);
+router.put('/reservations/:id/retour', markAsReturned);
+router.put('/reservations/:id/litige', handleLitige);
 
 module.exports = router;
