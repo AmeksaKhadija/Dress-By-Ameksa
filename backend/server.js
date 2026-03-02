@@ -8,6 +8,11 @@ connectDB();
 
 const app = express();
 app.use(cors());
+
+// Stripe webhook needs raw body — must come BEFORE express.json()
+const { handleWebhook } = require('./controllers/client/paiementController');
+app.post('/api/webhook/stripe', express.raw({ type: 'application/json' }), handleWebhook);
+
 app.use(express.json());
 
 // Routes
