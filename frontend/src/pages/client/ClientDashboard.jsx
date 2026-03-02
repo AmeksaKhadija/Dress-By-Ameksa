@@ -1,10 +1,34 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { HiClipboardList, HiUserCircle, HiArrowRight } from 'react-icons/hi';
+import { HiClipboardList, HiUserCircle, HiArrowRight, HiClock, HiCheckCircle, HiFlag } from 'react-icons/hi';
 import ClientLayout from '../../components/client/ClientLayout';
 import { useAuth } from '../../hooks/useAuth';
+import { getClientDashboardStats } from '../../services/clientReservationService';
 
 const ClientDashboard = () => {
   const { user } = useAuth();
+  const [stats, setStats] = useState(null);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const data = await getClientDashboardStats();
+        if (data.success) setStats(data.stats);
+      } catch {
+        // silently fail
+      }
+    };
+    fetchStats();
+  }, []);
+
+  const statCards = stats
+    ? [
+        { label: 'Total', value: stats.total, icon: HiClipboardList, color: 'bg-primary-50 text-primary-600' },
+        { label: 'En attente', value: stats.enAttente, icon: HiClock, color: 'bg-yellow-50 text-yellow-600' },
+        { label: 'Confirmees', value: stats.confirmee, icon: HiCheckCircle, color: 'bg-green-50 text-green-600' },
+        { label: 'Terminees', value: stats.terminee, icon: HiFlag, color: 'bg-blue-50 text-blue-600' },
+      ]
+    : [];
 
   return (
     <ClientLayout>
@@ -13,6 +37,21 @@ const ClientDashboard = () => {
           Bienvenue, {user?.nom}
         </h1>
         <p className="text-gray-500 mb-8">Gerez vos reservations et votre profil depuis votre espace client.</p>
+
+        {/* Stats */}
+        {stats && (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+            {statCards.map(({ label, value, icon: Icon, color }) => (
+              <div key={label} className="bg-white rounded-xl shadow-sm p-4">
+                <div className={`inline-flex p-2 rounded-lg ${color} mb-2`}>
+                  <Icon size={20} />
+                </div>
+                <p className="text-2xl font-bold text-gray-900">{value}</p>
+                <p className="text-sm text-gray-500">{label}</p>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Quick actions */}
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Actions rapides</h2>

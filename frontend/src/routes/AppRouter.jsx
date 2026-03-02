@@ -19,6 +19,7 @@ import GererReservations from '../pages/vendeur/GererReservations';
 import ClientDashboard from '../pages/client/ClientDashboard';
 import Profile from '../pages/client/Profile';
 import PaiementSuccess from '../pages/client/PaiementSuccess';
+import MesReservations from '../pages/client/MesReservations';
 
 const AppRouter = () => {
   return (
@@ -37,6 +38,7 @@ const AppRouter = () => {
         <Route element={<RoleRoute allowedRoles={['client']} />}>
           <Route path="/client/dashboard" element={<ClientDashboard />} />
           <Route path="/client/profile" element={<Profile />} />
+          <Route path="/client/reservations" element={<MesReservations />} />
           <Route path="/client/paiement/success" element={<PaiementSuccess />} />
         </Route>
         <Route element={<RoleRoute allowedRoles={['vendeur']} />}>
