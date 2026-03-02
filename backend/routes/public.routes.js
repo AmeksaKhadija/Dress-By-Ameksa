@@ -1,5 +1,6 @@
 const router = require('express').Router();
+const { getPopularTenues } = require('../controllers/public/publicController');
 
-// Routes will be added in Phase 3, 4, 5, 6
+router.get('/tenues/popular', getPopularTenues);
 
 module.exports = router;

@@ -1,14 +1,9 @@
 import { Routes, Route } from 'react-router-dom';
 import Register from '../pages/auth/Register';
 import Login from '../pages/auth/Login';
+import Home from '../pages/public/Home';
 import PrivateRoute from './PrivateRoute';
 import RoleRoute from './RoleRoute';
-
-const Home = () => (
-  <div className="text-center py-20">
-    <h1 className="text-3xl font-serif">Accueil - Coming Soon</h1>
-  </div>
-);
 
 const AppRouter = () => {
   return (
