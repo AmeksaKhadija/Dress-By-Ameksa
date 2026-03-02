@@ -1,7 +1,10 @@
 const Reservation = require('../../models/Reservation');
 const Tenue = require('../../models/Tenue');
 const Boutique = require('../../models/Boutique');
+const User = require('../../models/User');
 const paginate = require('../../utils/pagination');
+const sendEmail = require('../../utils/email');
+const { reservationStatusTemplate } = require('../../utils/emailTemplates');
 
 const getVendeurTenueIds = async (userId) => {
   const boutique = await Boutique.findOne({ vendeur: userId });
@@ -96,6 +99,22 @@ exports.updateReservationStatut = async (req, res, next) => {
 
     reservation.statut = statut;
     await reservation.save();
+
+    // Send email notification to client
+    const client = await User.findById(reservation.client);
+    const tenue = await Tenue.findById(reservation.tenue);
+    if (client?.email && tenue) {
+      const html = reservationStatusTemplate({
+        clientNom: client.nom,
+        tenueNom: tenue.nom,
+        statut,
+      });
+      sendEmail({
+        to: client.email,
+        subject: `Reservation ${statut === 'confirmee' ? 'confirmee' : 'annulee'} - Dress by Ameksa`,
+        html,
+      });
+    }
 
     res.json({
       success: true,
