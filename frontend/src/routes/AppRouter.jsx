@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
+import Register from '../pages/auth/Register';
 
 const Home = () => (
   <div className="text-center py-20">
@@ -10,6 +11,7 @@ const AppRouter = () => {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
+      <Route path="/register" element={<Register />} />
       <Route path="*" element={
         <div className="text-center py-20">
           <h1 className="text-2xl font-bold text-gray-900">404</h1>

@@ -1,5 +1,6 @@
 const router = require('express').Router();
+const { register } = require('../controllers/auth/authController');
 
-// Routes will be added in Phase 1 & 2
+router.post('/register', register);
 
 module.exports = router;
