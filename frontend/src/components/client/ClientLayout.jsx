@@ -1,11 +1,13 @@
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { HiHome, HiClipboardList, HiUserCircle, HiMenu, HiX, HiLogout } from 'react-icons/hi';
+import { HiHome, HiClipboardList, HiUserCircle, HiBell, HiMenu, HiX, HiLogout } from 'react-icons/hi';
 import { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
+import { useNotifications } from '../../hooks/useNotifications';
 
 const links = [
   { to: '/client/dashboard', label: 'Dashboard', icon: HiHome },
   { to: '/client/reservations', label: 'Mes Reservations', icon: HiClipboardList },
+  { to: '/client/notifications', label: 'Notifications', icon: HiBell },
   { to: '/client/profile', label: 'Mon Profil', icon: HiUserCircle },
 ];
 
@@ -14,6 +16,7 @@ const ClientLayout = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const { unreadCount } = useNotifications();
 
   const handleLogout = () => {
     logout();
@@ -55,6 +58,11 @@ const ClientLayout = ({ children }) => {
                 >
                   <Icon size={20} />
                   {label}
+                  {to === '/client/notifications' && unreadCount > 0 && (
+                    <span className="ml-auto bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                      {unreadCount > 9 ? '9+' : unreadCount}
+                    </span>
+                  )}
                 </NavLink>
               ))}
             </nav>

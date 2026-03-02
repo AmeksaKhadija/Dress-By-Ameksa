@@ -4,6 +4,7 @@ const Reservation = require('../../models/Reservation');
 const User = require('../../models/User');
 const sendEmail = require('../../utils/email');
 const { paiementConfirmationTemplate } = require('../../utils/emailTemplates');
+const createNotification = require('../../utils/createNotification');
 
 // @desc    Create Stripe checkout session
 // @route   POST /api/client/paiement/checkout/:reservationId
@@ -122,6 +123,16 @@ exports.verifyPayment = async (req, res, next) => {
           html,
         });
       }
+
+      // Create notification
+      createNotification({
+        utilisateur: paiement.client,
+        type: 'paiement_reussi',
+        titre: 'Paiement confirme',
+        message: `Votre paiement de ${paiement.montant} MAD a ete confirme avec succes.`,
+        lien: '/client/reservations',
+        reservation: paiement.reservation,
+      });
 
       const populatedReservation = await Reservation.findById(paiement.reservation)
         .populate('tenue', 'nom images prix type');

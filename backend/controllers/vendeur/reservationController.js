@@ -5,6 +5,7 @@ const User = require('../../models/User');
 const paginate = require('../../utils/pagination');
 const sendEmail = require('../../utils/email');
 const { reservationStatusTemplate } = require('../../utils/emailTemplates');
+const createNotification = require('../../utils/createNotification');
 
 const getVendeurTenueIds = async (userId) => {
   const boutique = await Boutique.findOne({ vendeur: userId });
@@ -116,6 +117,17 @@ exports.updateReservationStatut = async (req, res, next) => {
       });
     }
 
+    // Create notification for client
+    const notifType = statut === 'confirmee' ? 'reservation_confirmee' : 'reservation_annulee';
+    createNotification({
+      utilisateur: reservation.client,
+      type: notifType,
+      titre: statut === 'confirmee' ? 'Reservation confirmee' : 'Reservation annulee',
+      message: `Votre reservation pour "${tenue?.nom || 'une tenue'}" a ete ${statut === 'confirmee' ? 'confirmee' : 'annulee'}.`,
+      lien: '/client/reservations',
+      reservation: reservation._id,
+    });
+
     res.json({
       success: true,
       message: statut === 'confirmee' ? 'Reservation acceptee' : 'Reservation refusee',
@@ -146,6 +158,16 @@ exports.markAsReturned = async (req, res, next) => {
 
     reservation.statut = 'terminee';
     await reservation.save();
+
+    // Notify client
+    createNotification({
+      utilisateur: reservation.client,
+      type: 'reservation_terminee',
+      titre: 'Reservation terminee',
+      message: 'Votre reservation a ete marquee comme terminee. Merci!',
+      lien: '/client/reservations',
+      reservation: reservation._id,
+    });
 
     res.json({ success: true, message: 'Retour enregistre', reservation });
   } catch (error) {

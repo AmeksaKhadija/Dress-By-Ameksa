@@ -15,6 +15,12 @@ const {
   getMyReservationById,
   getDashboardStats,
 } = require('../controllers/client/reservationController');
+const {
+  getNotifications,
+  getUnreadCount,
+  markAsRead,
+  markAllAsRead,
+} = require('../controllers/client/notificationController');
 
 router.use(protect);
 router.use(authorize('client'));
@@ -34,5 +40,11 @@ router.get('/reservations/:id', getMyReservationById);
 // Paiement
 router.post('/paiement/checkout/:reservationId', createCheckoutSession);
 router.get('/paiement/verify/:sessionId', verifyPayment);
+
+// Notifications
+router.get('/notifications', getNotifications);
+router.get('/notifications/unread-count', getUnreadCount);
+router.put('/notifications/lire-tout', markAllAsRead);
+router.put('/notifications/:id/lire', markAsRead);
 
 module.exports = router;

@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { HiMenu, HiX } from 'react-icons/hi';
+import { HiMenu, HiX, HiBell } from 'react-icons/hi';
 import { useAuth } from '../../hooks/useAuth';
+import { useNotifications } from '../../hooks/useNotifications';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -11,6 +12,7 @@ const Navbar = () => {
   const isVendeurPage = location.pathname.startsWith('/vendeur');
   const isClientPage = location.pathname.startsWith('/client');
   const isDashboardPage = isVendeurPage || isClientPage;
+  const { unreadCount } = useNotifications();
 
   const handleLogout = () => {
     logout();
@@ -51,6 +53,16 @@ const Navbar = () => {
                 {user.role === 'client' && !isClientPage && (
                   <Link to="/client/dashboard" className="text-primary-600 hover:text-primary-700 font-medium transition">
                     Mon Espace
+                  </Link>
+                )}
+                {user.role === 'client' && !isClientPage && (
+                  <Link to="/client/notifications" className="relative text-gray-700 hover:text-primary-600 transition">
+                    <HiBell size={22} />
+                    {unreadCount > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                        {unreadCount > 9 ? '9+' : unreadCount}
+                      </span>
+                    )}
                   </Link>
                 )}
                 {user.role === 'admin' && (
