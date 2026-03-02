@@ -1,4 +1,5 @@
 const Tenue = require('../../models/Tenue');
+const Reservation = require('../../models/Reservation');
 const paginate = require('../../utils/pagination');
 
 // @desc    Get popular/recent tenues
@@ -42,6 +43,51 @@ exports.getTenues = async (req, res, next) => {
     });
 
     res.json({ success: true, ...result });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Get single tenue by ID
+// @route   GET /api/public/tenues/:id
+exports.getTenueById = async (req, res, next) => {
+  try {
+    const tenue = await Tenue.findById(req.params.id).populate('boutique', 'nom description logo');
+    if (!tenue) {
+      return res.status(404).json({ success: false, message: 'Tenue non trouvee' });
+    }
+
+    // Check availability by checking active reservations
+    const reservations = await Reservation.find({
+      tenue: tenue._id,
+      statut: { $in: ['en_attente', 'confirmee'] },
+      dateFin: { $gte: new Date() },
+    }).select('dateDebut dateFin');
+
+    res.json({ success: true, tenue, reservations });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Get similar tenues
+// @route   GET /api/public/tenues/:id/similar
+exports.getSimilarTenues = async (req, res, next) => {
+  try {
+    const tenue = await Tenue.findById(req.params.id);
+    if (!tenue) {
+      return res.status(404).json({ success: false, message: 'Tenue non trouvee' });
+    }
+
+    const similar = await Tenue.find({
+      _id: { $ne: tenue._id },
+      disponible: true,
+      $or: [{ type: tenue.type }, { boutique: tenue.boutique }],
+    })
+      .limit(4)
+      .populate('boutique', 'nom');
+
+    res.json({ success: true, tenues: similar });
   } catch (error) {
     next(error);
   }
