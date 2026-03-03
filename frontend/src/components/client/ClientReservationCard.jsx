@@ -17,7 +17,7 @@ const STATUT_LABELS = {
 const formatDate = (date) => new Date(date).toLocaleDateString('fr-FR');
 
 const ClientReservationCard = ({ reservation, onPayer }) => {
-  const { tenue, dateDebut, dateFin, prixTotal, statut } = reservation;
+  const { tenue, dateDebut, dateFin, prixTotal, statut, taille, couleur } = reservation;
 
   return (
     <div className="bg-white rounded-xl shadow-sm p-5 flex flex-col sm:flex-row gap-4">
@@ -64,6 +64,22 @@ const ClientReservationCard = ({ reservation, onPayer }) => {
             <span>{prixTotal} MAD</span>
           </div>
         </div>
+
+        {/* Taille & Couleur */}
+        {(taille || couleur) && (
+          <div className="flex gap-3 mb-3">
+            {taille && (
+              <span className="px-2.5 py-1 bg-gray-100 rounded-lg text-xs text-gray-600">
+                Taille : {taille}
+              </span>
+            )}
+            {couleur && (
+              <span className="px-2.5 py-1 bg-gray-100 rounded-lg text-xs text-gray-600">
+                Couleur : {couleur}
+              </span>
+            )}
+          </div>
+        )}
 
         {/* Actions */}
         {statut === 'en_attente' && (

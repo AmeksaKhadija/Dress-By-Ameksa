@@ -25,6 +25,14 @@ const reservationSchema = new mongoose.Schema(
       enum: ['en_attente', 'confirmee', 'annulee', 'terminee'],
       default: 'en_attente',
     },
+    taille: {
+      type: String,
+      required: [true, 'La taille est requise'],
+    },
+    couleur: {
+      type: String,
+      required: [true, 'La couleur est requise'],
+    },
     prixTotal: {
       type: Number,
       required: true,

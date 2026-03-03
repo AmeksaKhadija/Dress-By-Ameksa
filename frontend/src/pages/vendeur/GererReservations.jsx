@@ -4,6 +4,7 @@ import VendeurLayout from '../../components/vendeur/VendeurLayout';
 import ReservationCard from '../../components/reservation/ReservationCard';
 import Modal from '../../components/common/Modal';
 import Loader from '../../components/common/Loader';
+import Pagination from '../../components/common/Pagination';
 import useReservation from '../../hooks/useReservation';
 
 const TABS = [
@@ -106,24 +107,11 @@ const GererReservations = () => {
               ))}
             </div>
 
-            {/* Pagination */}
-            {pagination.pages > 1 && (
-              <div className="flex justify-center gap-2 mt-6">
-                {Array.from({ length: pagination.pages }, (_, i) => i + 1).map((p) => (
-                  <button
-                    key={p}
-                    onClick={() => fetchReservations(p, statusFilter)}
-                    className={`w-10 h-10 rounded-lg text-sm font-medium transition ${
-                      pagination.page === p
-                        ? 'bg-primary-600 text-white'
-                        : 'bg-white text-gray-600 border border-gray-300 hover:border-primary-400'
-                    }`}
-                  >
-                    {p}
-                  </button>
-                ))}
-              </div>
-            )}
+            <Pagination
+              currentPage={pagination.page}
+              totalPages={pagination.pages}
+              onPageChange={(p) => fetchReservations(p, statusFilter)}
+            />
           </>
         )}
       </div>

@@ -13,7 +13,7 @@ exports.createCheckoutSession = async (req, res, next) => {
     const reservation = await Reservation.findOne({
       _id: req.params.reservationId,
       client: req.user._id,
-      statut: 'en_attente',
+      statut: 'confirmee',
     }).populate('tenue', 'nom images prix');
 
     if (!reservation) {
@@ -102,12 +102,6 @@ exports.verifyPayment = async (req, res, next) => {
       paiement.stripePaymentIntentId = session.payment_intent;
       await paiement.save();
 
-      const reservation = await Reservation.findById(paiement.reservation);
-      if (reservation && reservation.statut === 'en_attente') {
-        reservation.statut = 'confirmee';
-        await reservation.save();
-      }
-
       // Send payment confirmation email
       const client = await User.findById(paiement.client);
       if (client?.email) {
@@ -167,12 +161,6 @@ exports.handleWebhook = async (req, res) => {
       paiement.statut = 'reussi';
       paiement.stripePaymentIntentId = session.payment_intent;
       await paiement.save();
-
-      const reservation = await Reservation.findById(paiement.reservation);
-      if (reservation && reservation.statut === 'en_attente') {
-        reservation.statut = 'confirmee';
-        await reservation.save();
-      }
     }
   }
 

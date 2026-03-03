@@ -16,7 +16,7 @@ const useReservation = () => {
   const fetchReservations = useCallback(async (page = 1, statut = '') => {
     setLoading(true);
     try {
-      const params = { page, limit: 10 };
+      const params = { page, limit: 5 };
       if (statut) params.statut = statut;
       const data = await getMyReservations(params);
       setReservations(data.reservations);

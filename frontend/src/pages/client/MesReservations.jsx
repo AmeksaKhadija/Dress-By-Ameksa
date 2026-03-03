@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import ClientLayout from '../../components/client/ClientLayout';
 import ClientReservationCard from '../../components/client/ClientReservationCard';
 import Loader from '../../components/common/Loader';
+import Pagination from '../../components/common/Pagination';
 import useClientReservation from '../../hooks/useClientReservation';
 import { HiClipboardList, HiPlus } from 'react-icons/hi';
 
@@ -19,7 +20,6 @@ const MesReservations = () => {
     loading,
     pagination,
     statusFilter,
-    page,
     setPage,
     handleFilterChange,
     handlePayer,
@@ -79,28 +79,11 @@ const MesReservations = () => {
               ))}
             </div>
 
-            {/* Pagination */}
-            {pagination.totalPages > 1 && (
-              <div className="flex justify-center gap-2 mt-8">
-                <button
-                  onClick={() => setPage(page - 1)}
-                  disabled={page <= 1}
-                  className="px-4 py-2 text-sm rounded-lg bg-white text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Precedent
-                </button>
-                <span className="px-4 py-2 text-sm text-gray-600">
-                  Page {pagination.currentPage} / {pagination.totalPages}
-                </span>
-                <button
-                  onClick={() => setPage(page + 1)}
-                  disabled={page >= pagination.totalPages}
-                  className="px-4 py-2 text-sm rounded-lg bg-white text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Suivant
-                </button>
-              </div>
-            )}
+            <Pagination
+              currentPage={pagination.currentPage}
+              totalPages={pagination.totalPages}
+              onPageChange={setPage}
+            />
           </>
         )}
       </div>

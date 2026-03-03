@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { HiPlus, HiPencil, HiTrash, HiArrowLeft, HiChevronLeft, HiChevronRight } from 'react-icons/hi';
+import { HiPlus, HiPencil, HiTrash, HiArrowLeft } from 'react-icons/hi';
 import toast from 'react-hot-toast';
 import VendeurLayout from '../../components/vendeur/VendeurLayout';
 import TenueForm from '../../components/vendeur/TenueForm';
 import Modal from '../../components/common/Modal';
 import Loader from '../../components/common/Loader';
+import Pagination from '../../components/common/Pagination';
 import useTenues from '../../hooks/useTenues';
 import { createTenue, updateTenue, getMyTenueById } from '../../services/tenueService';
 import { formatPrice } from '../../utils/formatPrice';
@@ -181,28 +182,11 @@ const GererTenues = () => {
               </table>
             </div>
 
-            {/* Pagination */}
-            {pagination.pages > 1 && (
-              <div className="flex items-center justify-center gap-2 mt-6">
-                <button
-                  onClick={() => fetchTenues(pagination.page - 1)}
-                  disabled={pagination.page <= 1}
-                  className="p-2 rounded-lg border hover:bg-gray-50 disabled:opacity-30"
-                >
-                  <HiChevronLeft size={18} />
-                </button>
-                <span className="text-sm text-gray-600">
-                  Page {pagination.page} / {pagination.pages}
-                </span>
-                <button
-                  onClick={() => fetchTenues(pagination.page + 1)}
-                  disabled={pagination.page >= pagination.pages}
-                  className="p-2 rounded-lg border hover:bg-gray-50 disabled:opacity-30"
-                >
-                  <HiChevronRight size={18} />
-                </button>
-              </div>
-            )}
+            <Pagination
+              currentPage={pagination.page}
+              totalPages={pagination.pages}
+              onPageChange={(p) => fetchTenues(p)}
+            />
           </>
         )}
 

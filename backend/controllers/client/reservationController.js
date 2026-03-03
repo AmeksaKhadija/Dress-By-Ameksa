@@ -7,7 +7,7 @@ const createNotification = require('../../utils/createNotification');
 // @route   POST /api/client/reservations
 exports.createReservation = async (req, res, next) => {
   try {
-    const { tenueId, dateDebut, dateFin } = req.body;
+    const { tenueId, dateDebut, dateFin, taille, couleur } = req.body;
 
     const tenue = await Tenue.findById(tenueId);
     if (!tenue) {
@@ -18,11 +18,21 @@ exports.createReservation = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Cette tenue n\'est pas disponible' });
     }
 
+    // Validate taille
+    if (!taille || !tenue.tailles.includes(taille)) {
+      return res.status(400).json({ success: false, message: 'Veuillez choisir une taille valide' });
+    }
+
+    // Validate couleur
+    if (!couleur || !tenue.couleurs.includes(couleur)) {
+      return res.status(400).json({ success: false, message: 'Veuillez choisir une couleur valide' });
+    }
+
     const start = new Date(dateDebut);
     const end = new Date(dateFin);
 
-    if (start >= end) {
-      return res.status(400).json({ success: false, message: 'La date de fin doit etre apres la date de debut' });
+    if (start > end) {
+      return res.status(400).json({ success: false, message: 'La date de fin doit etre egale ou apres la date de debut' });
     }
 
     if (start < new Date()) {
@@ -42,8 +52,8 @@ exports.createReservation = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Cette tenue est deja reservee pour ces dates' });
     }
 
-    // Calculate price (number of days * price per day)
-    const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+    // Calculate price (minimum 1 day)
+    const days = Math.max(1, Math.ceil((end - start) / (1000 * 60 * 60 * 24)));
     const prixTotal = days * tenue.prix;
 
     const reservation = await Reservation.create({
@@ -51,6 +61,8 @@ exports.createReservation = async (req, res, next) => {
       tenue: tenueId,
       dateDebut: start,
       dateFin: end,
+      taille,
+      couleur,
       prixTotal,
     });
 

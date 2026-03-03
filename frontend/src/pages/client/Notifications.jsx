@@ -10,6 +10,7 @@ import {
 } from 'react-icons/hi';
 import ClientLayout from '../../components/client/ClientLayout';
 import Loader from '../../components/common/Loader';
+import Pagination from '../../components/common/Pagination';
 import { getNotifications, markAsRead, markAllAsRead } from '../../services/notificationService';
 import { useNotifications } from '../../hooks/useNotifications';
 
@@ -44,7 +45,7 @@ const Notifications = () => {
   const fetchNotifications = async () => {
     setLoading(true);
     try {
-      const data = await getNotifications({ page, limit: 20 });
+      const data = await getNotifications({ page, limit: 5 });
       if (data.success) {
         setNotifications(data.notifications);
         setPagination(data.pagination);
@@ -140,27 +141,11 @@ const Notifications = () => {
               })}
             </div>
 
-            {pagination.totalPages > 1 && (
-              <div className="flex justify-center gap-2 mt-8">
-                <button
-                  onClick={() => setPage(page - 1)}
-                  disabled={page <= 1}
-                  className="px-4 py-2 text-sm rounded-lg bg-white text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Precedent
-                </button>
-                <span className="px-4 py-2 text-sm text-gray-600">
-                  Page {pagination.currentPage} / {pagination.totalPages}
-                </span>
-                <button
-                  onClick={() => setPage(page + 1)}
-                  disabled={page >= pagination.totalPages}
-                  className="px-4 py-2 text-sm rounded-lg bg-white text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Suivant
-                </button>
-              </div>
-            )}
+            <Pagination
+              currentPage={pagination.currentPage}
+              totalPages={pagination.totalPages}
+              onPageChange={setPage}
+            />
           </>
         )}
       </div>

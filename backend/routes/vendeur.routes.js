@@ -22,6 +22,11 @@ const {
   markAsReturned,
   handleLitige,
 } = require('../controllers/vendeur/reservationController');
+const {
+  getProfile,
+  updateProfile,
+  changePassword,
+} = require('../controllers/client/clientController');
 
 router.use(protect);
 router.use(authorize('vendeur'));
@@ -45,5 +50,10 @@ router.get('/reservations/:id', getMyReservationById);
 router.put('/reservations/:id/statut', updateReservationStatut);
 router.put('/reservations/:id/retour', markAsReturned);
 router.put('/reservations/:id/litige', handleLitige);
+
+// Profile
+router.get('/profile', getProfile);
+router.put('/profile', updateProfile);
+router.put('/profile/password', changePassword);
 
 module.exports = router;

@@ -10,7 +10,7 @@ const useTenues = () => {
   const fetchTenues = useCallback(async (page = 1) => {
     setLoading(true);
     try {
-      const data = await getMyTenues({ page, limit: 10 });
+      const data = await getMyTenues({ page, limit: 5 });
       setTenues(data.tenues);
       setPagination(data.pagination);
     } catch (error) {

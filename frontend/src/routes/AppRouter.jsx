@@ -14,6 +14,7 @@ import VendeurDashboard from '../pages/vendeur/VendeurDashboard';
 import GererBoutique from '../pages/vendeur/GererBoutique';
 import GererTenues from '../pages/vendeur/GererTenues';
 import GererReservations from '../pages/vendeur/GererReservations';
+import VendeurProfile from '../pages/vendeur/VendeurProfile';
 
 // Client pages
 import ClientDashboard from '../pages/client/ClientDashboard';
@@ -48,6 +49,7 @@ const AppRouter = () => {
           <Route path="/vendeur/boutique" element={<GererBoutique />} />
           <Route path="/vendeur/tenues" element={<GererTenues />} />
           <Route path="/vendeur/reservations" element={<GererReservations />} />
+          <Route path="/vendeur/profile" element={<VendeurProfile />} />
         </Route>
         <Route element={<RoleRoute allowedRoles={['admin']} />}>
           {/* Admin routes */}
