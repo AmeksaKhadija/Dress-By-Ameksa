@@ -67,6 +67,9 @@ const ClientReservationCard = ({ reservation, onPayer }) => {
 
         {/* Actions */}
         {statut === 'en_attente' && (
+          <p className="text-sm text-yellow-600 font-medium">En attente d'acceptation par le vendeur</p>
+        )}
+        {statut === 'confirmee' && (
           <button
             onClick={() => onPayer(reservation._id)}
             className="inline-flex items-center gap-2 px-4 py-2 text-sm bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition"

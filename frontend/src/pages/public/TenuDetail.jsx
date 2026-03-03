@@ -1,19 +1,28 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { HiArrowLeft } from 'react-icons/hi';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { HiArrowLeft, HiCalendar } from 'react-icons/hi';
+import toast from 'react-hot-toast';
 import Loader from '../../components/common/Loader';
 import TenuCard from '../../components/tenue/TenuCard';
 import { getTenueById, getSimilarTenues } from '../../services/tenueService';
+import { createReservation } from '../../services/clientReservationService';
+import { useAuth } from '../../hooks/useAuth';
 import { formatPrice } from '../../utils/formatPrice';
 
 const TenuDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [tenue, setTenue] = useState(null);
   const [reservations, setReservations] = useState([]);
   const [similar, setSimilar] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(0);
   const [checkDate, setCheckDate] = useState('');
+  const [showReservation, setShowReservation] = useState(false);
+  const [dateDebut, setDateDebut] = useState('');
+  const [dateFin, setDateFin] = useState('');
+  const [reserving, setReserving] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -169,6 +178,97 @@ const TenuDetail = () => {
                 )}
               </div>
             </div>
+
+            {/* Reservation button - only for authenticated clients */}
+            {user && user.role === 'client' && (
+              <div className="mt-8">
+                {!showReservation ? (
+                  <button
+                    onClick={() => setShowReservation(true)}
+                    className="w-full bg-primary-600 text-white py-3 rounded-lg font-medium hover:bg-primary-700 transition flex items-center justify-center gap-2"
+                  >
+                    <HiCalendar size={20} />
+                    Reserver cette tenue
+                  </button>
+                ) : (
+                  <div className="bg-white border border-gray-200 rounded-xl p-5">
+                    <h3 className="font-medium text-gray-900 mb-4">Reserver cette tenue</h3>
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-sm text-gray-600 mb-1">Date de debut</label>
+                        <input
+                          type="date"
+                          value={dateDebut}
+                          onChange={(e) => setDateDebut(e.target.value)}
+                          min={new Date().toISOString().split('T')[0]}
+                          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm text-gray-600 mb-1">Date de fin</label>
+                        <input
+                          type="date"
+                          value={dateFin}
+                          onChange={(e) => setDateFin(e.target.value)}
+                          min={dateDebut || new Date().toISOString().split('T')[0]}
+                          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 outline-none"
+                        />
+                      </div>
+                      {dateDebut && dateFin && new Date(dateFin) > new Date(dateDebut) && (
+                        <p className="text-sm text-gray-600">
+                          Prix total : <span className="font-semibold text-primary-700">
+                            {formatPrice(Math.ceil((new Date(dateFin) - new Date(dateDebut)) / (1000 * 60 * 60 * 24)) * tenue.prix)}
+                          </span>
+                          <span className="text-gray-400"> ({Math.ceil((new Date(dateFin) - new Date(dateDebut)) / (1000 * 60 * 60 * 24))} jours)</span>
+                        </p>
+                      )}
+                      <div className="flex gap-3 pt-2">
+                        <button
+                          onClick={async () => {
+                            if (!dateDebut || !dateFin) {
+                              toast.error('Veuillez selectionner les dates');
+                              return;
+                            }
+                            setReserving(true);
+                            try {
+                              await createReservation({ tenueId: id, dateDebut, dateFin });
+                              toast.success('Reservation creee avec succes!');
+                              navigate('/client/reservations');
+                            } catch (err) {
+                              toast.error(err.response?.data?.message || 'Erreur lors de la reservation');
+                            } finally {
+                              setReserving(false);
+                            }
+                          }}
+                          disabled={reserving}
+                          className="flex-1 bg-primary-600 text-white py-2.5 rounded-lg font-medium hover:bg-primary-700 transition disabled:opacity-50"
+                        >
+                          {reserving ? 'Reservation...' : 'Confirmer'}
+                        </button>
+                        <button
+                          onClick={() => setShowReservation(false)}
+                          className="px-4 py-2.5 text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
+                        >
+                          Annuler
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Login prompt for non-authenticated users */}
+            {!user && (
+              <div className="mt-8">
+                <Link
+                  to="/login"
+                  className="w-full bg-primary-600 text-white py-3 rounded-lg font-medium hover:bg-primary-700 transition flex items-center justify-center gap-2"
+                >
+                  Connectez-vous pour reserver
+                </Link>
+              </div>
+            )}
           </div>
         </div>
 

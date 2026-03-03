@@ -11,6 +11,7 @@ const {
   verifyPayment,
 } = require('../controllers/client/paiementController');
 const {
+  createReservation,
   getMyReservations,
   getMyReservationById,
   getDashboardStats,
@@ -34,6 +35,7 @@ router.put('/profile/password', changePassword);
 router.get('/dashboard', getDashboardStats);
 
 // Reservations
+router.post('/reservations', createReservation);
 router.get('/reservations', getMyReservations);
 router.get('/reservations/:id', getMyReservationById);
 

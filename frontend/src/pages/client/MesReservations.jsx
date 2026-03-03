@@ -1,8 +1,9 @@
+import { Link } from 'react-router-dom';
 import ClientLayout from '../../components/client/ClientLayout';
 import ClientReservationCard from '../../components/client/ClientReservationCard';
 import Loader from '../../components/common/Loader';
 import useClientReservation from '../../hooks/useClientReservation';
-import { HiClipboardList } from 'react-icons/hi';
+import { HiClipboardList, HiPlus } from 'react-icons/hi';
 
 const TABS = [
   { label: 'Toutes', value: '' },
@@ -27,7 +28,16 @@ const MesReservations = () => {
   return (
     <ClientLayout>
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Mes Reservations</h1>
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl font-bold text-gray-900">Mes Reservations</h1>
+          <Link
+            to="/catalogue"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 transition"
+          >
+            <HiPlus size={16} />
+            Nouvelle reservation
+          </Link>
+        </div>
 
         {/* Tabs filter */}
         <div className="flex flex-wrap gap-2 mb-6">

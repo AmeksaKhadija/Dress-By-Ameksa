@@ -1,5 +1,77 @@
 const Reservation = require('../../models/Reservation');
+const Tenue = require('../../models/Tenue');
 const paginate = require('../../utils/pagination');
+const createNotification = require('../../utils/createNotification');
+
+// @desc    Create a reservation
+// @route   POST /api/client/reservations
+exports.createReservation = async (req, res, next) => {
+  try {
+    const { tenueId, dateDebut, dateFin } = req.body;
+
+    const tenue = await Tenue.findById(tenueId);
+    if (!tenue) {
+      return res.status(404).json({ success: false, message: 'Tenue non trouvee' });
+    }
+
+    if (!tenue.disponible) {
+      return res.status(400).json({ success: false, message: 'Cette tenue n\'est pas disponible' });
+    }
+
+    const start = new Date(dateDebut);
+    const end = new Date(dateFin);
+
+    if (start >= end) {
+      return res.status(400).json({ success: false, message: 'La date de fin doit etre apres la date de debut' });
+    }
+
+    if (start < new Date()) {
+      return res.status(400).json({ success: false, message: 'La date de debut doit etre dans le futur' });
+    }
+
+    // Check for overlapping reservations
+    const overlap = await Reservation.findOne({
+      tenue: tenueId,
+      statut: { $in: ['en_attente', 'confirmee'] },
+      $or: [
+        { dateDebut: { $lte: end }, dateFin: { $gte: start } },
+      ],
+    });
+
+    if (overlap) {
+      return res.status(400).json({ success: false, message: 'Cette tenue est deja reservee pour ces dates' });
+    }
+
+    // Calculate price (number of days * price per day)
+    const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+    const prixTotal = days * tenue.prix;
+
+    const reservation = await Reservation.create({
+      client: req.user._id,
+      tenue: tenueId,
+      dateDebut: start,
+      dateFin: end,
+      prixTotal,
+    });
+
+    // Notify vendeur about new reservation
+    const boutique = await require('../../models/Boutique').findById(tenue.boutique);
+    if (boutique) {
+      createNotification({
+        utilisateur: boutique.vendeur,
+        type: 'nouvelle_reservation',
+        titre: 'Nouvelle reservation',
+        message: `Nouvelle reservation pour "${tenue.nom}" du ${start.toLocaleDateString('fr-FR')} au ${end.toLocaleDateString('fr-FR')}.`,
+        lien: '/vendeur/reservations',
+        reservation: reservation._id,
+      });
+    }
+
+    res.status(201).json({ success: true, reservation });
+  } catch (error) {
+    next(error);
+  }
+};
 
 // @desc    Get client's reservations
 // @route   GET /api/client/reservations
