@@ -22,6 +22,12 @@ const {
   markAsRead,
   markAllAsRead,
 } = require('../controllers/client/notificationController');
+const {
+  generateTryOn,
+  getMyTryOns,
+  getTryOnById,
+  deleteTryOn,
+} = require('../controllers/client/tryonController');
 
 router.use(protect);
 router.use(authorize('client'));
@@ -48,5 +54,11 @@ router.get('/notifications', getNotifications);
 router.get('/notifications/unread-count', getUnreadCount);
 router.put('/notifications/lire-tout', markAllAsRead);
 router.put('/notifications/:id/lire', markAsRead);
+
+// TryOn 3D
+router.post('/tryon', generateTryOn);
+router.get('/tryon', getMyTryOns);
+router.get('/tryon/:id', getTryOnById);
+router.delete('/tryon/:id', deleteTryOn);
 
 module.exports = router;

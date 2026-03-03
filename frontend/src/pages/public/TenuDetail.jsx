@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { HiArrowLeft, HiCalendar } from 'react-icons/hi';
+import { HiArrowLeft, HiCalendar, HiSparkles } from 'react-icons/hi';
 import toast from 'react-hot-toast';
 import DatePicker from 'react-datepicker';
 import { addDays, eachDayOfInterval, isWithinInterval } from 'date-fns';
@@ -252,6 +252,19 @@ const TenuDetail = () => {
                     </button>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {/* Essayer en 3D - DBA-42 */}
+            {user && user.role === 'client' && (
+              <div className="mt-6">
+                <Link
+                  to={`/client/tryon/${id}`}
+                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-lg font-medium hover:from-purple-700 hover:to-pink-700 transition flex items-center justify-center gap-2 shadow-sm"
+                >
+                  <HiSparkles size={20} />
+                  Essayer en 3D avec l'IA
+                </Link>
               </div>
             )}
 

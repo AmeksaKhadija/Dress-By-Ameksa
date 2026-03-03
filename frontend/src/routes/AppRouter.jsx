@@ -22,6 +22,7 @@ import Profile from '../pages/client/Profile';
 import PaiementSuccess from '../pages/client/PaiementSuccess';
 import MesReservations from '../pages/client/MesReservations';
 import Notifications from '../pages/client/Notifications';
+import TryOn from '../pages/client/TryOn';
 
 const AppRouter = () => {
   return (
@@ -43,6 +44,7 @@ const AppRouter = () => {
           <Route path="/client/reservations" element={<MesReservations />} />
           <Route path="/client/notifications" element={<Notifications />} />
           <Route path="/client/paiement/success" element={<PaiementSuccess />} />
+          <Route path="/client/tryon/:tenueId" element={<TryOn />} />
         </Route>
         <Route element={<RoleRoute allowedRoles={['vendeur']} />}>
           <Route path="/vendeur/dashboard" element={<VendeurDashboard />} />
