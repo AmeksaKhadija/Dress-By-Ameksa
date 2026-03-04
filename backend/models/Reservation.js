@@ -46,6 +46,19 @@ const reservationSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    retourSignale: {
+      type: Boolean,
+      default: false,
+    },
+    note: {
+      type: Number,
+      min: 1,
+      max: 5,
+    },
+    notificationRetourEnvoyee: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

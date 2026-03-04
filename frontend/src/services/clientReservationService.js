@@ -19,3 +19,13 @@ export const getClientDashboardStats = async () => {
   const { data } = await api.get('/client/dashboard');
   return data;
 };
+
+export const signalerRetour = async (id) => {
+  const { data } = await api.put(`/client/reservations/${id}/signaler-retour`);
+  return data;
+};
+
+export const soumettreTemoignage = async (id, note) => {
+  const { data } = await api.put(`/client/reservations/${id}/temoignage`, { note });
+  return data;
+};

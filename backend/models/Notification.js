@@ -16,6 +16,8 @@ const notificationSchema = new mongoose.Schema(
         'paiement_reussi',
         'paiement_echoue',
         'nouvelle_reservation',
+        'retour_signale',
+        'rappel_retour',
       ],
       required: true,
     },

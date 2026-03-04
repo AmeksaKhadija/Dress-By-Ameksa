@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getClientReservations } from '../services/clientReservationService';
+import { getClientReservations, signalerRetour, soumettreTemoignage } from '../services/clientReservationService';
 import { createCheckoutSession } from '../services/paiementService';
 import toast from 'react-hot-toast';
 
@@ -45,6 +45,26 @@ const useClientReservation = () => {
     }
   };
 
+  const handleSignalerRetour = async (reservationId) => {
+    try {
+      await signalerRetour(reservationId);
+      toast.success('Retour signale avec succes');
+      fetchReservations();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Erreur lors du signalement du retour');
+    }
+  };
+
+  const handleSoumettreTemoignage = async (reservationId, note) => {
+    try {
+      await soumettreTemoignage(reservationId, note);
+      toast.success('Merci pour votre temoignage!');
+      fetchReservations();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Erreur lors de la soumission du temoignage');
+    }
+  };
+
   return {
     reservations,
     loading,
@@ -54,6 +74,8 @@ const useClientReservation = () => {
     setPage,
     handleFilterChange,
     handlePayer,
+    handleSignalerRetour,
+    handleSoumettreTemoignage,
     fetchReservations,
   };
 };

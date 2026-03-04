@@ -9,15 +9,18 @@ import {
   HiX,
   HiLogout,
   HiArrowLeft,
+  HiBell,
 } from 'react-icons/hi';
 import { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
+import { useNotifications } from '../../hooks/useNotifications';
 
 const links = [
   { to: '/vendeur/dashboard', label: 'Dashboard', icon: HiHome },
   { to: '/vendeur/boutique', label: 'Ma Boutique', icon: HiShoppingBag },
   { to: '/vendeur/tenues', label: 'Mes Tenues', icon: HiCollection },
   { to: '/vendeur/reservations', label: 'Reservations', icon: HiClipboardList },
+  { to: '/vendeur/notifications', label: 'Notifications', icon: HiBell, hasNotifBadge: true },
   { to: '/vendeur/profile', label: 'Mon Profil', icon: HiUserCircle },
 ];
 
@@ -26,6 +29,7 @@ const VendeurLayout = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const { unreadCount } = useNotifications();
 
   const handleLogout = () => {
     logout();
@@ -72,7 +76,7 @@ const VendeurLayout = ({ children }) => {
 
             {/* Navigation */}
             <nav className="space-y-1 flex-1">
-              {links.map(({ to, label, icon: Icon }) => {
+              {links.map(({ to, label, icon: Icon, hasNotifBadge }) => {
                 const isActive = location.pathname === to;
                 return (
                   <NavLink
@@ -87,6 +91,13 @@ const VendeurLayout = ({ children }) => {
                   >
                     <Icon size={20} />
                     {label}
+                    {hasNotifBadge && unreadCount > 0 && (
+                      <span className={`ml-auto text-xs font-bold px-2 py-0.5 rounded-full ${
+                        isActive ? 'bg-white text-primary-600' : 'bg-primary-600 text-white'
+                      }`}>
+                        {unreadCount > 9 ? '9+' : unreadCount}
+                      </span>
+                    )}
                   </NavLink>
                 );
               })}

@@ -1,4 +1,4 @@
-import { HiCalendar, HiCurrencyDollar, HiUser, HiExclamationCircle } from 'react-icons/hi';
+import { HiCalendar, HiCurrencyDollar, HiUser, HiExclamationCircle, HiCheckCircle } from 'react-icons/hi';
 
 const STATUT_STYLES = {
   en_attente: 'bg-yellow-100 text-yellow-800',
@@ -17,7 +17,7 @@ const STATUT_LABELS = {
 const formatDate = (date) => new Date(date).toLocaleDateString('fr-FR');
 
 const ReservationCard = ({ reservation, onAccept, onRefuse, onReturn, onLitige }) => {
-  const { tenue, client, dateDebut, dateFin, prixTotal, statut, litige } = reservation;
+  const { tenue, client, dateDebut, dateFin, prixTotal, statut, litige, retourSignale, paiementEffectue } = reservation;
 
   return (
     <div className="bg-white rounded-xl shadow-sm p-5 flex flex-col sm:flex-row gap-4">
@@ -74,6 +74,14 @@ const ReservationCard = ({ reservation, onAccept, onRefuse, onReturn, onLitige }
           <p className="text-xs text-gray-400 mb-3">{client.email} {client.telephone ? `| ${client.telephone}` : ''}</p>
         )}
 
+        {/* Retour signale indicator */}
+        {statut === 'confirmee' && retourSignale && (
+          <div className="flex items-center gap-2 mb-2 px-3 py-2 bg-orange-50 border border-orange-200 rounded-lg">
+            <HiCheckCircle size={18} className="text-orange-500 flex-shrink-0" />
+            <p className="text-sm text-orange-700 font-medium">Le client a signale le retour de la tenue. Veuillez confirmer.</p>
+          </div>
+        )}
+
         {/* Actions */}
         <div className="flex flex-wrap gap-2">
           {statut === 'en_attente' && (
@@ -94,12 +102,22 @@ const ReservationCard = ({ reservation, onAccept, onRefuse, onReturn, onLitige }
           )}
           {statut === 'confirmee' && (
             <>
-              <button
-                onClick={() => onReturn(reservation._id)}
-                className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-              >
-                Marquer retour
-              </button>
+              {paiementEffectue ? (
+                <button
+                  onClick={() => onReturn(reservation._id)}
+                  className={`px-3 py-1.5 text-sm text-white rounded-lg transition ${
+                    retourSignale
+                      ? 'bg-green-600 hover:bg-green-700 animate-pulse'
+                      : 'bg-blue-600 hover:bg-blue-700'
+                  }`}
+                >
+                  {retourSignale ? 'Confirmer retour' : 'Marquer retour'}
+                </button>
+              ) : (
+                <span className="px-3 py-1.5 text-sm text-yellow-700 bg-yellow-100 rounded-lg font-medium">
+                  En attente de paiement
+                </span>
+              )}
               <button
                 onClick={() => onRefuse(reservation._id)}
                 className="px-3 py-1.5 text-sm bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition"

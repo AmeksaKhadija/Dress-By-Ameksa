@@ -9,7 +9,7 @@ import {
   HiCheck,
   HiRefresh,
 } from 'react-icons/hi';
-import ClientLayout from '../../components/client/ClientLayout';
+import VendeurLayout from '../../components/vendeur/VendeurLayout';
 import Loader from '../../components/common/Loader';
 import Pagination from '../../components/common/Pagination';
 import { getNotifications, markAsRead, markAllAsRead } from '../../services/notificationService';
@@ -37,7 +37,7 @@ const timeAgo = (date) => {
   return `Il y a ${days}j`;
 };
 
-const Notifications = () => {
+const VendeurNotifications = () => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({});
@@ -84,7 +84,7 @@ const Notifications = () => {
   const hasUnread = notifications.some((n) => !n.lue);
 
   return (
-    <ClientLayout>
+    <VendeurLayout>
       <div className="max-w-3xl mx-auto">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-gray-900">Notifications</h1>
@@ -152,8 +152,8 @@ const Notifications = () => {
           </>
         )}
       </div>
-    </ClientLayout>
+    </VendeurLayout>
   );
 };
 
-export default Notifications;
+export default VendeurNotifications;
