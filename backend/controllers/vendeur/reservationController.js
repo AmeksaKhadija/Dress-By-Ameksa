@@ -2,6 +2,7 @@ const Reservation = require('../../models/Reservation');
 const Tenue = require('../../models/Tenue');
 const Boutique = require('../../models/Boutique');
 const User = require('../../models/User');
+const Paiement = require('../../models/Paiement');
 const paginate = require('../../utils/pagination');
 const sendEmail = require('../../utils/email');
 const { reservationStatusTemplate } = require('../../utils/emailTemplates');
@@ -41,7 +42,21 @@ exports.getMyReservations = async (req, res, next) => {
       }
     );
 
-    res.json({ success: true, reservations: results, pagination });
+    // Enrich with payment status
+    const reservationIds = results.map((r) => r._id);
+    const paiements = await Paiement.find({
+      reservation: { $in: reservationIds },
+      statut: 'reussi',
+    }).select('reservation');
+    const paidSet = new Set(paiements.map((p) => p.reservation.toString()));
+
+    const reservations = results.map((r) => {
+      const obj = r.toObject();
+      obj.paiementEffectue = paidSet.has(r._id.toString());
+      return obj;
+    });
+
+    res.json({ success: true, reservations, pagination });
   } catch (error) {
     next(error);
   }
