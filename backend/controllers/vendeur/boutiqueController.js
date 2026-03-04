@@ -15,12 +15,25 @@ exports.getMyBoutique = async (req, res, next) => {
 
     const nbTenues = await Tenue.countDocuments({ boutique: boutique._id });
     const tenueIds = await Tenue.find({ boutique: boutique._id }).distinct('_id');
-    const nbReservations = await Reservation.countDocuments({ tenue: { $in: tenueIds } });
+
+    const [nbReservations, revenueAgg, tenues] = await Promise.all([
+      Reservation.countDocuments({ tenue: { $in: tenueIds } }),
+      Reservation.aggregate([
+        { $match: { tenue: { $in: tenueIds }, statut: { $in: ['confirmee', 'terminee'] } } },
+        { $group: { _id: null, totalRevenue: { $sum: '$prixTotal' }, nbReservationsPayees: { $sum: 1 } } },
+      ]),
+      Tenue.find({ boutique: boutique._id }).select('nom type prix images disponible'),
+    ]);
+
+    const totalRevenue = revenueAgg[0]?.totalRevenue || 0;
+    const nbReservationsPayees = revenueAgg[0]?.nbReservationsPayees || 0;
+    const commission = Math.round(totalRevenue * 0.15);
+    const gainsVendeur = totalRevenue - commission;
 
     res.json({
       success: true,
       boutique,
-      stats: { nbTenues, nbReservations },
+      stats: { nbTenues, nbReservations, totalRevenue, commission, gainsVendeur, nbReservationsPayees, tenues },
     });
   } catch (error) {
     next(error);
