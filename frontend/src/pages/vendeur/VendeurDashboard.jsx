@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { HiShoppingBag, HiCollection, HiClipboardList, HiArrowRight } from 'react-icons/hi';
+import { HiShoppingBag, HiCollection, HiClipboardList, HiArrowRight, HiCurrencyDollar } from 'react-icons/hi';
 import toast from 'react-hot-toast';
 import VendeurLayout from '../../components/vendeur/VendeurLayout';
 import Loader from '../../components/common/Loader';
 import { useAuth } from '../../hooks/useAuth';
 import { getMyBoutique } from '../../services/boutiqueService';
+import { formatPrice } from '../../utils/formatPrice';
 
 const STATUT_STYLES = {
   en_attente: 'bg-yellow-100 text-yellow-800 border-yellow-200',
@@ -19,11 +20,25 @@ const STATUT_LABELS = {
   suspendue: 'Suspendue',
 };
 
+const TYPE_LABELS = {
+  caftan: 'Caftan',
+  takchita: 'Takchita',
+  'robe de soiree': 'Robe de soiree',
+};
+
 const VendeurDashboard = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [boutique, setBoutique] = useState(null);
-  const [stats, setStats] = useState({ nbTenues: 0, nbReservations: 0 });
+  const [stats, setStats] = useState({
+    nbTenues: 0,
+    nbReservations: 0,
+    totalRevenue: 0,
+    commission: 0,
+    gainsVendeur: 0,
+    nbReservationsPayees: 0,
+    tenues: [],
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -31,7 +46,16 @@ const VendeurDashboard = () => {
         const data = await getMyBoutique();
         if (data.boutique) {
           setBoutique(data.boutique);
-          setStats(data.stats || { nbTenues: 0, nbReservations: 0 });
+          setStats({
+            nbTenues: 0,
+            nbReservations: 0,
+            totalRevenue: 0,
+            commission: 0,
+            gainsVendeur: 0,
+            nbReservationsPayees: 0,
+            tenues: [],
+            ...data.stats,
+          });
         }
       } catch (error) {
         toast.error('Erreur lors du chargement');
@@ -108,6 +132,95 @@ const VendeurDashboard = () => {
                 bgColor="bg-amber-50"
               />
             </div>
+
+            {/* Stats financieres - uniquement si boutique validee */}
+            {boutique.statut === 'validee' && (
+              <>
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">Revenus & Commissions</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+                  <StatCard
+                    icon={HiCurrencyDollar}
+                    label="Revenue total"
+                    value={formatPrice(stats.totalRevenue)}
+                    color="text-green-600"
+                    bgColor="bg-green-50"
+                  />
+                  <StatCard
+                    icon={HiCurrencyDollar}
+                    label="Commission plateforme (15%)"
+                    value={formatPrice(stats.commission)}
+                    color="text-orange-600"
+                    bgColor="bg-orange-50"
+                  />
+                  <StatCard
+                    icon={HiCurrencyDollar}
+                    label="Vos gains (85%)"
+                    value={formatPrice(stats.gainsVendeur)}
+                    color="text-emerald-600"
+                    bgColor="bg-emerald-50"
+                  />
+                </div>
+                {stats.nbReservationsPayees > 0 && (
+                  <p className="text-sm text-gray-500 -mt-4 mb-8">
+                    Base sur {stats.nbReservationsPayees} reservation{stats.nbReservationsPayees > 1 ? 's' : ''} confirmee{stats.nbReservationsPayees > 1 ? 's' : ''}/terminee{stats.nbReservationsPayees > 1 ? 's' : ''}
+                  </p>
+                )}
+              </>
+            )}
+
+            {/* Table des tenues avec prix */}
+            {stats.tenues?.length > 0 && (
+              <>
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">Mes tenues & prix</h2>
+                <div className="bg-white rounded-xl shadow-sm overflow-hidden mb-8">
+                  <table className="w-full">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Tenue</th>
+                        <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Type</th>
+                        <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Prix</th>
+                        <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Statut</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      {stats.tenues.map((tenue) => (
+                        <tr key={tenue._id} className="hover:bg-gray-50">
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-3">
+                              {tenue.images?.[0]?.url ? (
+                                <img src={tenue.images[0].url} alt="" className="w-10 h-10 rounded-lg object-cover" />
+                              ) : (
+                                <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
+                                  <HiCollection className="text-gray-400" size={18} />
+                                </div>
+                              )}
+                              <span className="font-medium text-gray-900">{tenue.nom}</span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3">
+                            <span className="inline-block px-2 py-1 text-xs font-medium rounded-full bg-purple-100 text-purple-700">
+                              {TYPE_LABELS[tenue.type] || tenue.type}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 font-semibold text-gray-900">
+                            {formatPrice(tenue.prix)}
+                          </td>
+                          <td className="px-4 py-3">
+                            <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${
+                              tenue.disponible
+                                ? 'bg-green-100 text-green-700'
+                                : 'bg-red-100 text-red-700'
+                            }`}>
+                              {tenue.disponible ? 'Disponible' : 'Indisponible'}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </>
+            )}
 
             {/* Quick actions */}
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Actions rapides</h2>
