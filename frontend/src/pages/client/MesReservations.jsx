@@ -23,6 +23,8 @@ const MesReservations = () => {
     setPage,
     handleFilterChange,
     handlePayer,
+    handleSignalerRetour,
+    handleSoumettreTemoignage,
   } = useClientReservation();
 
   return (
@@ -75,6 +77,8 @@ const MesReservations = () => {
                   key={reservation._id}
                   reservation={reservation}
                   onPayer={handlePayer}
+                  onSignalerRetour={handleSignalerRetour}
+                  onSoumettreTemoignage={handleSoumettreTemoignage}
                 />
               ))}
             </div>

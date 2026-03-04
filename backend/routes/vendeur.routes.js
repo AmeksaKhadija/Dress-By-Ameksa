@@ -27,6 +27,12 @@ const {
   updateProfile,
   changePassword,
 } = require('../controllers/client/clientController');
+const {
+  getNotifications,
+  getUnreadCount,
+  markAsRead,
+  markAllAsRead,
+} = require('../controllers/client/notificationController');
 
 router.use(protect);
 router.use(authorize('vendeur'));
@@ -50,6 +56,12 @@ router.get('/reservations/:id', getMyReservationById);
 router.put('/reservations/:id/statut', updateReservationStatut);
 router.put('/reservations/:id/retour', markAsReturned);
 router.put('/reservations/:id/litige', handleLitige);
+
+// Notifications
+router.get('/notifications', getNotifications);
+router.get('/notifications/unread-count', getUnreadCount);
+router.put('/notifications/lire-tout', markAllAsRead);
+router.put('/notifications/:id/lire', markAsRead);
 
 // Profile
 router.get('/profile', getProfile);

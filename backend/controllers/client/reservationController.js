@@ -1,5 +1,6 @@
 const Reservation = require('../../models/Reservation');
 const Tenue = require('../../models/Tenue');
+const Paiement = require('../../models/Paiement');
 const paginate = require('../../utils/pagination');
 const createNotification = require('../../utils/createNotification');
 
@@ -104,7 +105,44 @@ exports.getMyReservations = async (req, res, next) => {
       ],
     });
 
-    res.json({ success: true, reservations: results, pagination });
+    // Check which reservations have been paid
+    const reservationIds = results.map((r) => r._id);
+    const paiements = await Paiement.find({
+      reservation: { $in: reservationIds },
+      statut: 'reussi',
+    }).select('reservation');
+    const paidSet = new Set(paiements.map((p) => p.reservation.toString()));
+
+    const reservations = results.map((r) => {
+      const obj = r.toObject();
+      obj.paiementEffectue = paidSet.has(r._id.toString());
+      return obj;
+    });
+
+    // Check for overdue reservations and create reminder notifications
+    const now = new Date();
+    for (const r of results) {
+      const isPaid = paidSet.has(r._id.toString());
+      if (
+        r.statut === 'confirmee' &&
+        isPaid &&
+        new Date(r.dateFin) < now &&
+        !r.retourSignale &&
+        !r.notificationRetourEnvoyee
+      ) {
+        createNotification({
+          utilisateur: req.user._id,
+          type: 'rappel_retour',
+          titre: 'Rappel de retour',
+          message: `La date de fin de votre reservation pour "${r.tenue?.nom || 'une tenue'}" est passee. Pensez a retourner la tenue.`,
+          lien: '/client/reservations',
+          reservation: r._id,
+        });
+        Reservation.updateOne({ _id: r._id }, { notificationRetourEnvoyee: true }).exec();
+      }
+    }
+
+    res.json({ success: true, reservations, pagination });
   } catch (error) {
     next(error);
   }
@@ -145,6 +183,93 @@ exports.getDashboardStats = async (req, res, next) => {
     ]);
 
     res.json({ success: true, stats: { total, enAttente, confirmee, terminee } });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Signal return of outfit to vendeur
+// @route   PUT /api/client/reservations/:id/signaler-retour
+exports.signalerRetour = async (req, res, next) => {
+  try {
+    const reservation = await Reservation.findOne({
+      _id: req.params.id,
+      client: req.user._id,
+    }).populate({
+      path: 'tenue',
+      select: 'nom boutique',
+      populate: { path: 'boutique', select: 'vendeur' },
+    });
+
+    if (!reservation) {
+      return res.status(404).json({ success: false, message: 'Reservation non trouvee' });
+    }
+
+    if (reservation.statut !== 'confirmee') {
+      return res.status(400).json({ success: false, message: 'Seule une reservation confirmee peut etre signalee comme retournee' });
+    }
+
+    const paiement = await Paiement.findOne({ reservation: reservation._id, statut: 'reussi' });
+    if (!paiement) {
+      return res.status(400).json({ success: false, message: 'Le paiement doit etre effectue avant de signaler le retour' });
+    }
+
+    if (reservation.retourSignale) {
+      return res.status(400).json({ success: false, message: 'Le retour a deja ete signale' });
+    }
+
+    reservation.retourSignale = true;
+    await reservation.save();
+
+    const vendeurId = reservation.tenue?.boutique?.vendeur;
+    if (vendeurId) {
+      createNotification({
+        utilisateur: vendeurId,
+        type: 'retour_signale',
+        titre: 'Retour signale par le client',
+        message: `Le client a signale le retour de la tenue "${reservation.tenue?.nom || 'une tenue'}". Veuillez confirmer le retour.`,
+        lien: '/vendeur/reservations',
+        reservation: reservation._id,
+      });
+    }
+
+    res.json({ success: true, message: 'Retour signale avec succes' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Submit star rating for reservation
+// @route   PUT /api/client/reservations/:id/temoignage
+exports.soumettreTemoignage = async (req, res, next) => {
+  try {
+    const { note } = req.body;
+
+    if (!note || note < 1 || note > 5 || !Number.isInteger(note)) {
+      return res.status(400).json({ success: false, message: 'La note doit etre un entier entre 1 et 5' });
+    }
+
+    const reservation = await Reservation.findOne({
+      _id: req.params.id,
+      client: req.user._id,
+    });
+
+    if (!reservation) {
+      return res.status(404).json({ success: false, message: 'Reservation non trouvee' });
+    }
+
+    if (!reservation.retourSignale && reservation.statut !== 'terminee') {
+      return res.status(400).json({ success: false, message: 'Vous ne pouvez noter qu\'apres avoir signale le retour' });
+    }
+
+    if (reservation.note) {
+      return res.status(400).json({ success: false, message: 'Vous avez deja soumis une note' });
+    }
+
+    reservation.note = note;
+    await reservation.save();
+
+    res.json({ success: true, message: 'Merci pour votre temoignage!' });
   } catch (error) {
     next(error);
   }

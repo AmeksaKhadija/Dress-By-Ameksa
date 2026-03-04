@@ -15,6 +15,8 @@ const {
   getMyReservations,
   getMyReservationById,
   getDashboardStats,
+  signalerRetour,
+  soumettreTemoignage,
 } = require('../controllers/client/reservationController');
 const {
   getNotifications,
@@ -38,6 +40,8 @@ router.get('/dashboard', getDashboardStats);
 router.post('/reservations', createReservation);
 router.get('/reservations', getMyReservations);
 router.get('/reservations/:id', getMyReservationById);
+router.put('/reservations/:id/signaler-retour', signalerRetour);
+router.put('/reservations/:id/temoignage', soumettreTemoignage);
 
 // Paiement
 router.post('/paiement/checkout/:reservationId', createCheckoutSession);

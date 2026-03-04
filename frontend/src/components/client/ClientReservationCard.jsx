@@ -1,4 +1,5 @@
-import { HiCalendar, HiCurrencyDollar, HiShoppingBag, HiCreditCard } from 'react-icons/hi';
+import { useState } from 'react';
+import { HiCalendar, HiCurrencyDollar, HiShoppingBag, HiCreditCard, HiStar, HiCheckCircle } from 'react-icons/hi';
 
 const STATUT_STYLES = {
   en_attente: 'bg-yellow-100 text-yellow-800',
@@ -16,8 +17,19 @@ const STATUT_LABELS = {
 
 const formatDate = (date) => new Date(date).toLocaleDateString('fr-FR');
 
-const ClientReservationCard = ({ reservation, onPayer }) => {
-  const { tenue, dateDebut, dateFin, prixTotal, statut, taille, couleur } = reservation;
+const ClientReservationCard = ({ reservation, onPayer, onSignalerRetour, onSoumettreTemoignage }) => {
+  const { tenue, dateDebut, dateFin, prixTotal, statut, taille, couleur, paiementEffectue, retourSignale, note } = reservation;
+
+  const [selectedNote, setSelectedNote] = useState(0);
+  const [hoveredStar, setHoveredStar] = useState(0);
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmitNote = async () => {
+    if (selectedNote < 1 || selectedNote > 5) return;
+    setSubmitting(true);
+    await onSoumettreTemoignage(reservation._id, selectedNote);
+    setSubmitting(false);
+  };
 
   return (
     <div className="bg-white rounded-xl shadow-sm p-5 flex flex-col sm:flex-row gap-4">
@@ -85,7 +97,8 @@ const ClientReservationCard = ({ reservation, onPayer }) => {
         {statut === 'en_attente' && (
           <p className="text-sm text-yellow-600 font-medium">En attente d'acceptation par le vendeur</p>
         )}
-        {statut === 'confirmee' && (
+
+        {statut === 'confirmee' && !paiementEffectue && (
           <button
             onClick={() => onPayer(reservation._id)}
             className="inline-flex items-center gap-2 px-4 py-2 text-sm bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition"
@@ -93,6 +106,80 @@ const ClientReservationCard = ({ reservation, onPayer }) => {
             <HiCreditCard size={16} />
             Payer maintenant
           </button>
+        )}
+
+        {statut === 'confirmee' && paiementEffectue && (
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="inline-flex items-center gap-2 px-4 py-2 text-sm text-green-700 bg-green-100 rounded-lg font-medium">
+              <HiCreditCard size={16} />
+              Paiement effectue
+            </span>
+            {!retourSignale ? (
+              <button
+                onClick={() => onSignalerRetour(reservation._id)}
+                className="inline-flex items-center gap-2 px-4 py-2 text-sm bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition"
+              >
+                <HiCheckCircle size={16} />
+                J'ai rendu la tenue
+              </button>
+            ) : (
+              <span className="inline-flex items-center gap-2 px-4 py-2 text-sm text-orange-700 bg-orange-100 rounded-lg font-medium">
+                <HiCheckCircle size={16} />
+                Retour signale
+              </span>
+            )}
+          </div>
+        )}
+
+        {/* Star rating */}
+        {(retourSignale || statut === 'terminee') && !note && (
+          <div className="mt-3">
+            <p className="text-sm text-gray-600 mb-1">Notez votre experience :</p>
+            <div className="flex items-center gap-1">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  type="button"
+                  onClick={() => setSelectedNote(star)}
+                  onMouseEnter={() => setHoveredStar(star)}
+                  onMouseLeave={() => setHoveredStar(0)}
+                  className="focus:outline-none"
+                >
+                  <HiStar
+                    size={24}
+                    className={`transition ${
+                      star <= (hoveredStar || selectedNote)
+                        ? 'text-yellow-400'
+                        : 'text-gray-300'
+                    }`}
+                  />
+                </button>
+              ))}
+              {selectedNote > 0 && (
+                <button
+                  onClick={handleSubmitNote}
+                  disabled={submitting}
+                  className="ml-2 px-3 py-1 text-xs bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition disabled:opacity-50"
+                >
+                  {submitting ? '...' : 'Valider'}
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Read-only rating */}
+        {note && (
+          <div className="mt-3 flex items-center gap-1">
+            <span className="text-sm text-gray-600 mr-1">Votre note :</span>
+            {[1, 2, 3, 4, 5].map((star) => (
+              <HiStar
+                key={star}
+                size={20}
+                className={star <= note ? 'text-yellow-400' : 'text-gray-300'}
+              />
+            ))}
+          </div>
         )}
       </div>
     </div>

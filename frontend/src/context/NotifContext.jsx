@@ -9,7 +9,7 @@ export const NotifProvider = ({ children }) => {
   const { user } = useAuth();
 
   const refreshCount = useCallback(async () => {
-    if (!user || user.role !== 'client') return;
+    if (!user || !['client', 'vendeur'].includes(user.role)) return;
     try {
       const data = await getUnreadCount();
       if (data.success) setUnreadCount(data.count);
@@ -20,7 +20,7 @@ export const NotifProvider = ({ children }) => {
 
   useEffect(() => {
     refreshCount();
-    if (!user || user.role !== 'client') return;
+    if (!user || !['client', 'vendeur'].includes(user.role)) return;
 
     const interval = setInterval(refreshCount, 30000);
     return () => clearInterval(interval);
