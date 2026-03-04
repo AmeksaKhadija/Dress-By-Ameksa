@@ -21,7 +21,8 @@ const Navbar = () => {
 
   const isVendeurPage = location.pathname.startsWith('/vendeur');
   const isClientPage = location.pathname.startsWith('/client');
-  const isDashboardPage = isVendeurPage || isClientPage;
+  const isAdminPage = location.pathname.startsWith('/admin');
+  const isDashboardPage = isVendeurPage || isClientPage || isAdminPage;
 
   // Close user menu on outside click
   useEffect(() => {
@@ -91,8 +92,8 @@ const Navbar = () => {
                     Mon Espace
                   </Link>
                 )}
-                {user.role === 'admin' && (
-                  <Link to="/admin/boutiques" className="text-sm font-medium text-primary-600 hover:text-primary-700 px-3 py-2 rounded-lg hover:bg-primary-50 transition">
+                {user.role === 'admin' && !isAdminPage && (
+                  <Link to="/admin/dashboard" className="text-sm font-medium text-primary-600 hover:text-primary-700 px-3 py-2 rounded-lg hover:bg-primary-50 transition">
                     Admin
                   </Link>
                 )}
@@ -132,7 +133,7 @@ const Navbar = () => {
                           <p className="text-xs text-gray-500 truncate">{user?.email}</p>
                         </div>
                         <Link
-                          to={user.role === 'vendeur' ? '/vendeur/profile' : '/client/profile'}
+                          to={user.role === 'vendeur' ? '/vendeur/profile' : user.role === 'admin' ? '/admin/profile' : '/client/profile'}
                           onClick={() => setUserMenu(false)}
                           className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition"
                         >
@@ -226,14 +227,14 @@ const Navbar = () => {
                       )}
                     </Link>
                   )}
-                  {user.role === 'admin' && (
-                    <Link to="/admin/boutiques" className="block px-4 py-2.5 rounded-lg text-sm font-medium text-primary-600 hover:bg-primary-50 transition" onClick={() => setIsOpen(false)}>
+                  {user.role === 'admin' && !isAdminPage && (
+                    <Link to="/admin/dashboard" className="block px-4 py-2.5 rounded-lg text-sm font-medium text-primary-600 hover:bg-primary-50 transition" onClick={() => setIsOpen(false)}>
                       Admin
                     </Link>
                   )}
                   {!isDashboardPage && (
                     <>
-                      <Link to={user.role === 'vendeur' ? '/vendeur/profile' : '/client/profile'} className="block px-4 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition" onClick={() => setIsOpen(false)}>
+                      <Link to={user.role === 'vendeur' ? '/vendeur/profile' : user.role === 'admin' ? '/admin/profile' : '/client/profile'} className="block px-4 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition" onClick={() => setIsOpen(false)}>
                         Mon Profil
                       </Link>
                       <button onClick={handleLogout} className="block w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition">

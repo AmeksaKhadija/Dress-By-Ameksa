@@ -1,0 +1,16 @@
+feat(DBA-8): implementer page d'accueil avec tenues populaires
+
+Backend:
+- Model Tenue (nom, type, description, prix, tailles, couleurs, images, boutique)
+- Controller getPopularTenues (8 dernieres tenues)
+- Route GET /api/public/tenues/popular
+
+Frontend:
+- Page Home responsive: hero, section concept, tenues populaires, CTA
+- Composant TenuCard reutilisable avec image, type, nom, prix
+- Service tenueService pour les appels API
+
+Sub-tasks: DBA-11, DBA-12, DBA-13, DBA-14, DBA-15
+
+Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
+

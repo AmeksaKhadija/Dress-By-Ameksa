@@ -24,6 +24,14 @@ import MesReservations from '../pages/client/MesReservations';
 import Notifications from '../pages/client/Notifications';
 import TryOn from '../pages/client/TryOn';
 
+// Admin pages
+import AdminDashboard from '../pages/admin/AdminDashboard';
+import GererUtilisateurs from '../pages/admin/GererUtilisateurs';
+import GererBoutiquesAdmin from '../pages/admin/GererBoutiques';
+import GererReservationsAdmin from '../pages/admin/GererReservations';
+import AdminCommissions from '../pages/admin/Commissions';
+import AdminProfile from '../pages/admin/AdminProfile';
+
 const AppRouter = () => {
   return (
     <Routes>
@@ -54,7 +62,12 @@ const AppRouter = () => {
           <Route path="/vendeur/profile" element={<VendeurProfile />} />
         </Route>
         <Route element={<RoleRoute allowedRoles={['admin']} />}>
-          {/* Admin routes */}
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/utilisateurs" element={<GererUtilisateurs />} />
+          <Route path="/admin/boutiques" element={<GererBoutiquesAdmin />} />
+          <Route path="/admin/reservations" element={<GererReservationsAdmin />} />
+          <Route path="/admin/commissions" element={<AdminCommissions />} />
+          <Route path="/admin/profile" element={<AdminProfile />} />
         </Route>
       </Route>
 

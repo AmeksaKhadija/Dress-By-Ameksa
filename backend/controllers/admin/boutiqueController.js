@@ -1,17 +1,20 @@
 const Boutique = require('../../models/Boutique');
+const paginate = require('../../utils/pagination');
 
 // @desc    Get all boutiques (admin)
 // @route   GET /api/admin/boutiques
 exports.getAllBoutiques = async (req, res, next) => {
   try {
-    const { statut } = req.query;
+    const { statut, page, limit } = req.query;
     const query = statut ? { statut } : {};
 
-    const boutiques = await Boutique.find(query)
-      .populate('vendeur', 'nom email telephone')
-      .sort({ createdAt: -1 });
+    const { results: boutiques, pagination } = await paginate(Boutique, query, {
+      page,
+      limit: limit || 10,
+      populate: { path: 'vendeur', select: 'nom email telephone' },
+    });
 
-    res.json({ success: true, boutiques });
+    res.json({ success: true, boutiques, pagination });
   } catch (error) {
     next(error);
   }
