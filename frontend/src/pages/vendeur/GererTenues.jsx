@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { HiPlus, HiPencil, HiTrash, HiArrowLeft } from 'react-icons/hi';
+import { HiPlus, HiPencil, HiTrash, HiArrowLeft, HiArchive, HiRefresh } from 'react-icons/hi';
 import toast from 'react-hot-toast';
 import VendeurLayout from '../../components/vendeur/VendeurLayout';
 import TenueForm from '../../components/vendeur/TenueForm';
@@ -11,11 +11,12 @@ import { createTenue, updateTenue, getMyTenueById } from '../../services/tenueSe
 import { formatPrice } from '../../utils/formatPrice';
 
 const GererTenues = () => {
-  const { tenues, loading, pagination, fetchTenues, handleDelete, handleToggle } = useTenues();
+  const { tenues, loading, pagination, fetchTenues, handleDelete, handlePermanentDelete, handleRestore, handleToggle, showArchived, setShowArchived } = useTenues();
   const [view, setView] = useState('list'); // list | create | edit
   const [editTenue, setEditTenue] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [deleteModal, setDeleteModal] = useState(null);
+  const [permanentDeleteModal, setPermanentDeleteModal] = useState(null);
 
   const handleCreate = async (formData) => {
     setSubmitting(true);
@@ -23,7 +24,7 @@ const GererTenues = () => {
       await createTenue(formData);
       toast.success('Tenue ajoutee');
       setView('list');
-      fetchTenues(1);
+      fetchTenues(1, showArchived);
     } catch (error) {
       toast.error(error.response?.data?.message || 'Erreur');
     } finally {
@@ -48,7 +49,7 @@ const GererTenues = () => {
       toast.success('Tenue mise a jour');
       setView('list');
       setEditTenue(null);
-      fetchTenues(pagination.page);
+      fetchTenues(pagination.page, showArchived);
     } catch (error) {
       toast.error(error.response?.data?.message || 'Erreur');
     } finally {
@@ -100,25 +101,51 @@ const GererTenues = () => {
       <div className="max-w-5xl mx-auto">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-gray-900">Mes Tenues</h1>
-          <button
-            onClick={() => setView('create')}
-            className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition text-sm"
-          >
-            <HiPlus size={18} /> Ajouter
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setShowArchived(!showArchived)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition text-sm ${
+                showArchived
+                  ? 'bg-amber-100 text-amber-700 hover:bg-amber-200'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              <HiArchive size={16} /> {showArchived ? 'Voir actives' : 'Archivees'}
+            </button>
+            {!showArchived && (
+              <button
+                onClick={() => setView('create')}
+                className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition text-sm"
+              >
+                <HiPlus size={18} /> Ajouter
+              </button>
+            )}
+          </div>
         </div>
+
+        {showArchived && (
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4 text-sm text-amber-700">
+            Tenues archivees — ces tenues ne sont plus visibles par les clients. Vous pouvez les restaurer.
+          </div>
+        )}
 
         {loading ? (
           <Loader />
         ) : tenues.length === 0 ? (
           <div className="bg-white rounded-xl shadow-sm p-12 text-center">
-            <p className="text-gray-500 mb-4">Vous n'avez pas encore de tenues</p>
-            <button
-              onClick={() => setView('create')}
-              className="inline-flex items-center gap-2 bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition"
-            >
-              <HiPlus size={18} /> Ajouter ma premiere tenue
-            </button>
+            {showArchived ? (
+              <p className="text-gray-500">Aucune tenue archivee</p>
+            ) : (
+              <>
+                <p className="text-gray-500 mb-4">Vous n'avez pas encore de tenues</p>
+                <button
+                  onClick={() => setView('create')}
+                  className="inline-flex items-center gap-2 bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition"
+                >
+                  <HiPlus size={18} /> Ajouter ma premiere tenue
+                </button>
+              </>
+            )}
           </div>
         ) : (
           <>
@@ -129,13 +156,15 @@ const GererTenues = () => {
                     <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Tenue</th>
                     <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase hidden sm:table-cell">Type</th>
                     <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Prix</th>
-                    <th className="text-center px-4 py-3 text-xs font-medium text-gray-500 uppercase">Dispo</th>
+                    {!showArchived && (
+                      <th className="text-center px-4 py-3 text-xs font-medium text-gray-500 uppercase">Dispo</th>
+                    )}
                     <th className="text-right px-4 py-3 text-xs font-medium text-gray-500 uppercase">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   {tenues.map((tenue) => (
-                    <tr key={tenue._id} className="hover:bg-gray-50">
+                    <tr key={tenue._id} className={`hover:bg-gray-50 ${showArchived ? 'opacity-75' : ''}`}>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-3">
                           {tenue.images?.[0]?.url ? (
@@ -148,32 +177,53 @@ const GererTenues = () => {
                       </td>
                       <td className="px-4 py-3 text-sm text-gray-600 capitalize hidden sm:table-cell">{tenue.type}</td>
                       <td className="px-4 py-3 text-sm font-medium text-gray-900">{formatPrice(tenue.prix)}</td>
-                      <td className="px-4 py-3 text-center">
-                        <button
-                          onClick={() => handleToggle(tenue._id, !tenue.disponible)}
-                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition ${
-                            tenue.disponible ? 'bg-green-500' : 'bg-gray-300'
-                          }`}
-                        >
-                          <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${
-                            tenue.disponible ? 'translate-x-6' : 'translate-x-1'
-                          }`} />
-                        </button>
-                      </td>
+                      {!showArchived && (
+                        <td className="px-4 py-3 text-center">
+                          <button
+                            onClick={() => handleToggle(tenue._id, !tenue.disponible)}
+                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition ${
+                              tenue.disponible ? 'bg-green-500' : 'bg-gray-300'
+                            }`}
+                          >
+                            <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${
+                              tenue.disponible ? 'translate-x-6' : 'translate-x-1'
+                            }`} />
+                          </button>
+                        </td>
+                      )}
                       <td className="px-4 py-3 text-right">
                         <div className="flex items-center justify-end gap-2">
-                          <button
-                            onClick={() => handleEdit(tenue._id)}
-                            className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition"
-                          >
-                            <HiPencil size={16} />
-                          </button>
-                          <button
-                            onClick={() => setDeleteModal(tenue._id)}
-                            className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition"
-                          >
-                            <HiTrash size={16} />
-                          </button>
+                          {showArchived ? (
+                            <>
+                              <button
+                                onClick={() => handleRestore(tenue._id)}
+                                className="flex items-center gap-1 px-3 py-1.5 text-sm text-green-600 hover:bg-green-50 rounded-lg transition"
+                              >
+                                <HiRefresh size={16} /> Restaurer
+                              </button>
+                              <button
+                                onClick={() => setPermanentDeleteModal(tenue._id)}
+                                className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition"
+                              >
+                                <HiTrash size={16} />
+                              </button>
+                            </>
+                          ) : (
+                            <>
+                              <button
+                                onClick={() => handleEdit(tenue._id)}
+                                className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                              >
+                                <HiPencil size={16} />
+                              </button>
+                              <button
+                                onClick={() => setDeleteModal(tenue._id)}
+                                className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition"
+                              >
+                                <HiTrash size={16} />
+                              </button>
+                            </>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -185,7 +235,7 @@ const GererTenues = () => {
             <Pagination
               currentPage={pagination.page}
               totalPages={pagination.pages}
-              onPageChange={(p) => fetchTenues(p)}
+              onPageChange={(p) => fetchTenues(p, showArchived)}
             />
           </>
         )}
@@ -193,12 +243,28 @@ const GererTenues = () => {
         <Modal
           isOpen={!!deleteModal}
           onClose={() => setDeleteModal(null)}
-          title="Supprimer la tenue"
+          title="Archiver la tenue"
           onConfirm={confirmDelete}
+          confirmText="Archiver"
+          confirmColor="bg-amber-600 hover:bg-amber-700"
+        >
+          <p className="text-gray-600">Cette tenue sera archivee et ne sera plus visible par les clients. Vous pourrez la restaurer depuis les archives.</p>
+        </Modal>
+
+        <Modal
+          isOpen={!!permanentDeleteModal}
+          onClose={() => setPermanentDeleteModal(null)}
+          title="Supprimer definitivement"
+          onConfirm={async () => {
+            if (permanentDeleteModal) {
+              await handlePermanentDelete(permanentDeleteModal);
+              setPermanentDeleteModal(null);
+            }
+          }}
           confirmText="Supprimer"
           confirmColor="bg-red-600 hover:bg-red-700"
         >
-          <p className="text-gray-600">Etes-vous sur de vouloir supprimer cette tenue ? Cette action est irreversible.</p>
+          <p className="text-gray-600">Cette action est irreversible. La tenue et ses images seront supprimees definitivement.</p>
         </Modal>
       </div>
     </VendeurLayout>

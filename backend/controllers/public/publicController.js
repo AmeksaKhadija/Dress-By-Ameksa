@@ -7,7 +7,7 @@ const paginate = require('../../utils/pagination');
 // @route   GET /api/public/tenues/popular
 exports.getPopularTenues = async (req, res, next) => {
   try {
-    const tenues = await Tenue.find({ disponible: true })
+    const tenues = await Tenue.find({ disponible: true, archivee: { $ne: true } })
       .sort({ createdAt: -1 })
       .limit(8)
       .populate('boutique', 'nom');
@@ -23,7 +23,7 @@ exports.getPopularTenues = async (req, res, next) => {
 exports.getTenues = async (req, res, next) => {
   try {
     const { type, couleur, taille, prixMin, prixMax, search, page, limit } = req.query;
-    const query = { disponible: true };
+    const query = { disponible: true, archivee: { $ne: true } };
 
     if (type) query.type = type;
     if (couleur) query.couleurs = { $in: [couleur] };
@@ -83,6 +83,7 @@ exports.getSimilarTenues = async (req, res, next) => {
     const similar = await Tenue.find({
       _id: { $ne: tenue._id },
       disponible: true,
+      archivee: { $ne: true },
       $or: [{ type: tenue.type }, { boutique: tenue.boutique }],
     })
       .limit(4)
@@ -117,7 +118,7 @@ exports.getBoutiqueById = async (req, res, next) => {
       return res.status(404).json({ success: false, message: 'Boutique non trouvee' });
     }
 
-    const tenues = await Tenue.find({ boutique: boutique._id, disponible: true })
+    const tenues = await Tenue.find({ boutique: boutique._id, disponible: true, archivee: { $ne: true } })
       .sort({ createdAt: -1 })
       .populate('boutique', 'nom');
 

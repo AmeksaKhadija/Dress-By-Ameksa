@@ -50,6 +50,16 @@ export const deleteTenue = async (id) => {
   return data;
 };
 
+export const permanentDeleteTenue = async (id) => {
+  const { data } = await api.delete(`/vendeur/tenues/${id}/permanent`);
+  return data;
+};
+
+export const restoreTenue = async (id) => {
+  const { data } = await api.patch(`/vendeur/tenues/${id}/restore`);
+  return data;
+};
+
 export const toggleDisponibilite = async (id, disponible) => {
   const { data } = await api.patch(`/vendeur/tenues/${id}/disponibilite`, { disponible });
   return data;

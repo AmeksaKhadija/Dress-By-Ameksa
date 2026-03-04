@@ -1,5 +1,6 @@
 const Tenue = require('../../models/Tenue');
 const Boutique = require('../../models/Boutique');
+const Reservation = require('../../models/Reservation');
 const { cloudinary } = require('../../config/cloudinary');
 const paginate = require('../../utils/pagination');
 
@@ -23,9 +24,15 @@ const getVendeurBoutique = async (userId, requireValidee = false) => {
 exports.getMyTenues = async (req, res, next) => {
   try {
     const boutique = await getVendeurBoutique(req.user._id);
+    const filter = { boutique: boutique._id };
+    if (req.query.archivee === 'true') {
+      filter.archivee = true;
+    } else {
+      filter.archivee = { $ne: true };
+    }
     const { results, pagination } = await paginate(
       Tenue,
-      { boutique: boutique._id },
+      filter,
       { page: req.query.page, limit: req.query.limit }
     );
     res.json({ success: true, tenues: results, pagination });
@@ -124,14 +131,47 @@ exports.updateTenue = async (req, res, next) => {
   }
 };
 
-// @desc    Delete a tenue
+// @desc    Delete a tenue (blocks if active reservations, otherwise archives)
 // @route   DELETE /api/vendeur/tenues/:id
 exports.deleteTenue = async (req, res, next) => {
   try {
     const boutique = await getVendeurBoutique(req.user._id);
-    const tenue = await Tenue.findOne({ _id: req.params.id, boutique: boutique._id });
+    const tenue = await Tenue.findOne({ _id: req.params.id, boutique: boutique._id, archivee: { $ne: true } });
     if (!tenue) {
       return res.status(404).json({ success: false, message: 'Tenue non trouvee' });
+    }
+
+    // Check for active reservations (en_attente or confirmee)
+    const activeReservations = await Reservation.countDocuments({
+      tenue: tenue._id,
+      statut: { $in: ['en_attente', 'confirmee'] },
+    });
+
+    if (activeReservations > 0) {
+      return res.status(400).json({
+        success: false,
+        message: `Impossible de supprimer cette tenue, elle a ${activeReservations} reservation(s) en cours.`,
+      });
+    }
+
+    // Soft delete: always archive
+    tenue.archivee = true;
+    tenue.disponible = false;
+    await tenue.save();
+    res.json({ success: true, message: 'Tenue archivee', archivee: true });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Permanently delete an archived tenue
+// @route   DELETE /api/vendeur/tenues/:id/permanent
+exports.permanentDeleteTenue = async (req, res, next) => {
+  try {
+    const boutique = await getVendeurBoutique(req.user._id);
+    const tenue = await Tenue.findOne({ _id: req.params.id, boutique: boutique._id, archivee: true });
+    if (!tenue) {
+      return res.status(404).json({ success: false, message: 'Tenue archivee non trouvee' });
     }
 
     for (const img of tenue.images) {
@@ -141,7 +181,26 @@ exports.deleteTenue = async (req, res, next) => {
     }
 
     await tenue.deleteOne();
-    res.json({ success: true, message: 'Tenue supprimee' });
+    res.json({ success: true, message: 'Tenue supprimee definitivement' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Restore an archived tenue
+// @route   PATCH /api/vendeur/tenues/:id/restore
+exports.restoreTenue = async (req, res, next) => {
+  try {
+    const boutique = await getVendeurBoutique(req.user._id);
+    const tenue = await Tenue.findOne({ _id: req.params.id, boutique: boutique._id, archivee: true });
+    if (!tenue) {
+      return res.status(404).json({ success: false, message: 'Tenue archivee non trouvee' });
+    }
+
+    tenue.archivee = false;
+    tenue.disponible = true;
+    await tenue.save();
+    res.json({ success: true, message: 'Tenue restauree', tenue });
   } catch (error) {
     next(error);
   }

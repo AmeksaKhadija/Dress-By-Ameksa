@@ -13,6 +13,8 @@ const {
   createTenue,
   updateTenue,
   deleteTenue,
+  permanentDeleteTenue,
+  restoreTenue,
   toggleDisponibilite,
 } = require('../controllers/vendeur/tenueController');
 const {
@@ -42,6 +44,8 @@ router.get('/tenues/:id', getMyTenueById);
 router.post('/tenues', uploadMultiple, createTenue);
 router.put('/tenues/:id', uploadMultiple, updateTenue);
 router.delete('/tenues/:id', deleteTenue);
+router.delete('/tenues/:id/permanent', permanentDeleteTenue);
+router.patch('/tenues/:id/restore', restoreTenue);
 router.patch('/tenues/:id/disponibilite', toggleDisponibilite);
 
 // Reservations

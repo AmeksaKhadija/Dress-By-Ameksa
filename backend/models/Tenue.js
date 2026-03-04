@@ -39,6 +39,10 @@ const tenueSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    archivee: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
