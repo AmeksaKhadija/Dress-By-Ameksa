@@ -55,10 +55,16 @@ const TenuDetail = () => {
     fetchData();
   }, [id]);
 
-  // Calculate excluded dates from active reservations
+  // Filter reservations by selected taille + couleur
+  const filteredReservations = useMemo(() => {
+    if (!selectedTaille || !selectedCouleur) return reservations;
+    return reservations.filter((r) => r.taille === selectedTaille && r.couleur === selectedCouleur);
+  }, [reservations, selectedTaille, selectedCouleur]);
+
+  // Calculate excluded dates from filtered reservations
   const excludedDates = useMemo(() => {
     const dates = [];
-    reservations.forEach((r) => {
+    filteredReservations.forEach((r) => {
       const start = new Date(r.dateDebut);
       const end = new Date(r.dateFin);
       if (end >= start) {
@@ -66,11 +72,11 @@ const TenuDetail = () => {
       }
     });
     return dates;
-  }, [reservations]);
+  }, [filteredReservations]);
 
   // Check if a date is excluded (reserved)
   const isDateExcluded = (date) => {
-    return reservations.some((r) => {
+    return filteredReservations.some((r) => {
       const start = new Date(r.dateDebut);
       const end = new Date(r.dateFin);
       return isWithinInterval(date, { start, end });
@@ -127,7 +133,7 @@ const TenuDetail = () => {
       toast.error('Veuillez selectionner les dates');
       return;
     }
-    // Verify no reserved dates in the selected range
+    // Verify no reserved dates (same taille+couleur) in the selected range
     const rangeDays = eachDayOfInterval({ start: dateDebut, end: dateFin });
     const hasConflict = rangeDays.some((d) => isDateExcluded(d));
     if (hasConflict) {
@@ -219,7 +225,7 @@ const TenuDetail = () => {
                   {tenue.tailles.map((t) => (
                     <button
                       key={t}
-                      onClick={() => setSelectedTaille(t)}
+                      onClick={() => { setSelectedTaille(t); setDateDebut(null); setDateFin(null); }}
                       className={`px-4 py-2 rounded-lg text-sm font-medium border transition ${
                         selectedTaille === t
                           ? 'bg-primary-600 text-white border-primary-600'
@@ -241,7 +247,7 @@ const TenuDetail = () => {
                   {tenue.couleurs.map((c) => (
                     <button
                       key={c}
-                      onClick={() => setSelectedCouleur(c)}
+                      onClick={() => { setSelectedCouleur(c); setDateDebut(null); setDateFin(null); }}
                       className={`px-4 py-2 rounded-lg text-sm font-medium border transition ${
                         selectedCouleur === c
                           ? 'bg-primary-600 text-white border-primary-600'

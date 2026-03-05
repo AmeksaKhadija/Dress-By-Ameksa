@@ -40,17 +40,18 @@ exports.createReservation = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'La date de debut doit etre dans le futur' });
     }
 
-    // Check for overlapping reservations
+    // Check for overlapping reservations (same tenue + same taille + same couleur)
     const overlap = await Reservation.findOne({
       tenue: tenueId,
+      taille,
+      couleur,
       statut: { $in: ['en_attente', 'confirmee'] },
-      $or: [
-        { dateDebut: { $lte: end }, dateFin: { $gte: start } },
-      ],
+      dateDebut: { $lte: end },
+      dateFin: { $gte: start },
     });
 
     if (overlap) {
-      return res.status(400).json({ success: false, message: 'Cette tenue est deja reservee pour ces dates' });
+      return res.status(400).json({ success: false, message: 'Cette tenue est deja reservee pour ces dates avec cette taille et couleur' });
     }
 
     // Calculate price (minimum 1 day)

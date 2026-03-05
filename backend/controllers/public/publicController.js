@@ -63,7 +63,7 @@ exports.getTenueById = async (req, res, next) => {
       tenue: tenue._id,
       statut: { $in: ['en_attente', 'confirmee'] },
       dateFin: { $gte: new Date() },
-    }).select('dateDebut dateFin');
+    }).select('dateDebut dateFin taille couleur');
 
     res.json({ success: true, tenue, reservations });
   } catch (error) {
