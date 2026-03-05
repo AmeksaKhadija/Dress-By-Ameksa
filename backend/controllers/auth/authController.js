@@ -16,18 +16,22 @@ exports.register = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Role invalide' });
     }
 
-    const user = await User.create({ nom, email, motDePasse, role, telephone, adresse });
+    const statut = role === 'vendeur' ? 'en_attente' : 'actif';
+    const user = await User.create({ nom, email, motDePasse, role, telephone, adresse, statut });
     const token = generateToken(user._id);
 
     res.status(201).json({
       success: true,
-      message: 'Compte cree avec succes',
+      message: role === 'vendeur'
+        ? 'Compte vendeur cree. En attente d\'approbation par l\'administrateur.'
+        : 'Compte cree avec succes',
       token,
       user: {
         _id: user._id,
         nom: user.nom,
         email: user.email,
         role: user.role,
+        statut: user.statut,
       },
     });
   } catch (error) {
@@ -65,6 +69,7 @@ exports.login = async (req, res, next) => {
         nom: user.nom,
         email: user.email,
         role: user.role,
+        statut: user.statut,
       },
     });
   } catch (error) {

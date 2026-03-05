@@ -9,9 +9,11 @@ import {
   HiX,
   HiLogout,
   HiArrowLeft,
+  HiClock,
 } from 'react-icons/hi';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
+import api from '../../services/api';
 
 const links = [
   { to: '/vendeur/dashboard', label: 'Dashboard', icon: HiHome },
@@ -25,7 +27,27 @@ const VendeurLayout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { user, updateUser, logout } = useAuth();
+
+  const isEnAttente = user?.statut === 'en_attente';
+
+  // Auto-sync statut from API so vendeur doesn't need to re-login after approval
+  useEffect(() => {
+    if (!isEnAttente) return;
+    const checkStatut = async () => {
+      try {
+        const { data } = await api.get('/auth/me');
+        if (data.user && data.user.statut !== user.statut) {
+          updateUser({ ...user, statut: data.user.statut });
+        }
+      } catch {
+        // silently ignore
+      }
+    };
+    const interval = setInterval(checkStatut, 30000); // check every 30s
+    checkStatut(); // also check immediately
+    return () => clearInterval(interval);
+  }, [isEnAttente]);
 
   const handleLogout = () => {
     logout();
@@ -74,15 +96,21 @@ const VendeurLayout = ({ children }) => {
             <nav className="space-y-1 flex-1">
               {links.map(({ to, label, icon: Icon }) => {
                 const isActive = location.pathname === to;
+                const isDisabled = isEnAttente && to !== '/vendeur/profile' && to !== '/vendeur/dashboard';
                 return (
                   <NavLink
                     key={to}
-                    to={to}
-                    onClick={() => setSidebarOpen(false)}
+                    to={isDisabled ? '#' : to}
+                    onClick={(e) => {
+                      if (isDisabled) { e.preventDefault(); return; }
+                      setSidebarOpen(false);
+                    }}
                     className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-                      isActive
-                        ? 'bg-primary-600 text-white shadow-sm shadow-primary-200'
-                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                      isDisabled
+                        ? 'text-gray-300 cursor-not-allowed'
+                        : isActive
+                          ? 'bg-primary-600 text-white shadow-sm shadow-primary-200'
+                          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                     }`}
                   >
                     <Icon size={20} />
@@ -121,7 +149,19 @@ const VendeurLayout = ({ children }) => {
         )}
 
         {/* Main content */}
-        <main className="flex-1 p-6 lg:p-8">{children}</main>
+        <main className="flex-1 p-6 lg:p-8">
+          {isEnAttente && (
+            <div className="mb-6 bg-amber-50 border border-amber-200 rounded-xl p-6 text-center">
+              <HiClock className="mx-auto text-amber-500 mb-3" size={40} />
+              <h2 className="text-lg font-semibold text-amber-800">Compte en attente d&apos;approbation</h2>
+              <p className="text-sm text-amber-600 mt-1">
+                Votre compte vendeur est en attente de validation par l&apos;administrateur.
+                Vous serez notifie des que votre compte sera approuve.
+              </p>
+            </div>
+          )}
+          {children}
+        </main>
       </div>
     </div>
   );

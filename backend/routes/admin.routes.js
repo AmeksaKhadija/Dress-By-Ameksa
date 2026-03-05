@@ -9,6 +9,7 @@ const {
   getAllUsers,
   getUserById,
   updateUserRole,
+  approveVendeur,
   deleteUser,
 } = require('../controllers/admin/userController');
 const {
@@ -42,6 +43,7 @@ router.get('/commissions', getCommissions);
 router.get('/users', getAllUsers);
 router.get('/users/:id', getUserById);
 router.put('/users/:id/role', updateUserRole);
+router.put('/users/:id/approve', approveVendeur);
 router.delete('/users/:id', deleteUser);
 
 // Boutiques management
