@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import toast from 'react-hot-toast';
-import { getAllUsers, updateUserRole, deleteUser } from '../services/adminService';
+import { getAllUsers, updateUserRole, approveVendeur, deleteUser } from '../services/adminService';
 
 const useAdminUsers = () => {
   const [users, setUsers] = useState([]);
@@ -39,6 +39,16 @@ const useAdminUsers = () => {
     }
   };
 
+  const handleApprove = async (id) => {
+    try {
+      await approveVendeur(id);
+      toast.success('Vendeur approuve avec succes');
+      fetchUsers(pagination.page, roleFilter, search);
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Erreur');
+    }
+  };
+
   const handleDelete = async (id) => {
     try {
       await deleteUser(id);
@@ -51,7 +61,7 @@ const useAdminUsers = () => {
 
   return {
     users, loading, pagination, roleFilter, setRoleFilter,
-    search, setSearch, fetchUsers, handleRoleChange, handleDelete,
+    search, setSearch, fetchUsers, handleRoleChange, handleApprove, handleDelete,
   };
 };
 

@@ -18,6 +18,7 @@ const notificationSchema = new mongoose.Schema(
         'nouvelle_reservation',
         'retour_signale',
         'rappel_retour',
+        'compte_approuve',
       ],
       required: true,
     },

@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const protect = require('../middleware/auth.middleware');
 const authorize = require('../middleware/role.middleware');
+const vendeurApproved = require('../middleware/vendeurApproved.middleware');
 const { uploadSingle, uploadMultiple } = require('../middleware/uploadMiddleware');
 const {
   getMyBoutique,
@@ -41,25 +42,25 @@ router.use(authorize('vendeur'));
 
 // Boutique
 router.get('/boutique', getMyBoutique);
-router.post('/boutique', uploadSingle, createBoutique);
-router.put('/boutique', uploadSingle, updateBoutique);
+router.post('/boutique', vendeurApproved, uploadSingle, createBoutique);
+router.put('/boutique', vendeurApproved, uploadSingle, updateBoutique);
 
 // Tenues
 router.get('/tenues', getMyTenues);
 router.get('/tenues/:id', getMyTenueById);
-router.post('/tenues', uploadMultiple, createTenue);
-router.put('/tenues/:id', uploadMultiple, updateTenue);
-router.delete('/tenues/:id', deleteTenue);
-router.delete('/tenues/:id/permanent', permanentDeleteTenue);
-router.patch('/tenues/:id/restore', restoreTenue);
-router.patch('/tenues/:id/disponibilite', toggleDisponibilite);
+router.post('/tenues', vendeurApproved, uploadMultiple, createTenue);
+router.put('/tenues/:id', vendeurApproved, uploadMultiple, updateTenue);
+router.delete('/tenues/:id', vendeurApproved, deleteTenue);
+router.delete('/tenues/:id/permanent', vendeurApproved, permanentDeleteTenue);
+router.patch('/tenues/:id/restore', vendeurApproved, restoreTenue);
+router.patch('/tenues/:id/disponibilite', vendeurApproved, toggleDisponibilite);
 
 // Reservations
 router.get('/reservations', getMyReservations);
 router.get('/reservations/:id', getMyReservationById);
-router.put('/reservations/:id/statut', updateReservationStatut);
-router.put('/reservations/:id/retour', markAsReturned);
-router.put('/reservations/:id/litige', handleLitige);
+router.put('/reservations/:id/statut', vendeurApproved, updateReservationStatut);
+router.put('/reservations/:id/retour', vendeurApproved, markAsReturned);
+router.put('/reservations/:id/litige', vendeurApproved, handleLitige);
 
 // Notifications
 router.get('/notifications', getNotifications);

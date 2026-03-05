@@ -26,6 +26,11 @@ const userSchema = new mongoose.Schema(
       enum: ['client', 'vendeur', 'admin'],
       default: 'client',
     },
+    statut: {
+      type: String,
+      enum: ['en_attente', 'actif'],
+      default: 'actif',
+    },
     telephone: {
       type: String,
       trim: true,

@@ -43,6 +43,11 @@ export const updateUserRole = async (id, role) => {
   return data;
 };
 
+export const approveVendeur = async (id) => {
+  const { data } = await api.put(`/admin/users/${id}/approve`);
+  return data;
+};
+
 export const deleteUser = async (id) => {
   const { data } = await api.delete(`/admin/users/${id}`);
   return data;

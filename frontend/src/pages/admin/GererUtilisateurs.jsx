@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { HiSearch, HiTrash } from 'react-icons/hi';
+import { HiSearch, HiTrash, HiCheck } from 'react-icons/hi';
 import AdminLayout from '../../components/admin/AdminLayout';
 import Loader from '../../components/common/Loader';
 import Modal from '../../components/common/Modal';
@@ -20,7 +20,7 @@ const ROLE_BADGES = {
 };
 
 const GererUtilisateurs = () => {
-  const { users, loading, pagination, roleFilter, setRoleFilter, search, setSearch, fetchUsers, handleRoleChange, handleDelete } = useAdminUsers();
+  const { users, loading, pagination, roleFilter, setRoleFilter, search, setSearch, fetchUsers, handleRoleChange, handleApprove, handleDelete } = useAdminUsers();
   const [deleteModal, setDeleteModal] = useState(null);
   const [roleModal, setRoleModal] = useState(null);
   const [newRole, setNewRole] = useState('');
@@ -95,6 +95,7 @@ const GererUtilisateurs = () => {
                     <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase hidden sm:table-cell">Email</th>
                     <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase hidden md:table-cell">Telephone</th>
                     <th className="text-center px-4 py-3 text-xs font-medium text-gray-500 uppercase">Role</th>
+                    <th className="text-center px-4 py-3 text-xs font-medium text-gray-500 uppercase hidden sm:table-cell">Statut</th>
                     <th className="text-right px-4 py-3 text-xs font-medium text-gray-500 uppercase">Actions</th>
                   </tr>
                 </thead>
@@ -115,13 +116,35 @@ const GererUtilisateurs = () => {
                           {u.role}
                         </button>
                       </td>
+                      <td className="px-4 py-3 text-center hidden sm:table-cell">
+                        {u.role === 'vendeur' ? (
+                          <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                            u.statut === 'actif' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'
+                          }`}>
+                            {u.statut === 'actif' ? 'Actif' : 'En attente'}
+                          </span>
+                        ) : (
+                          <span className="text-xs text-gray-400">-</span>
+                        )}
+                      </td>
                       <td className="px-4 py-3 text-right">
-                        <button
-                          onClick={() => setDeleteModal(u._id)}
-                          className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition"
-                        >
-                          <HiTrash size={16} />
-                        </button>
+                        <div className="flex items-center justify-end gap-1">
+                          {u.role === 'vendeur' && u.statut === 'en_attente' && (
+                            <button
+                              onClick={() => handleApprove(u._id)}
+                              className="p-1.5 text-green-600 hover:bg-green-50 rounded-lg transition"
+                              title="Approuver le vendeur"
+                            >
+                              <HiCheck size={16} />
+                            </button>
+                          )}
+                          <button
+                            onClick={() => setDeleteModal(u._id)}
+                            className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition"
+                          >
+                            <HiTrash size={16} />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
