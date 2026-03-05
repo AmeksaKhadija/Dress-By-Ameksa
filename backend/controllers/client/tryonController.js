@@ -53,6 +53,13 @@ exports.generateTryOn = async (req, res, next) => {
       );
     } catch (aiError) {
       console.error('Erreur AI:', aiError.message);
+      if (aiError.isQuota) {
+        return res.status(429).json({
+          success: false,
+          code: 'QUOTA_EXCEEDED',
+          message: 'Le quota journalier d\'essayage virtuel est atteint. Veuillez reessayer demain.',
+        });
+      }
       return res.status(502).json({
         success: false,
         message: 'L\'IA n\'a pas pu generer l\'image. Veuillez reessayer.',
