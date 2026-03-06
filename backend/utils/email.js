@@ -9,6 +9,11 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendEmail = async ({ to, subject, html }) => {
+  // Skip sending emails in test environment
+  if (process.env.NODE_ENV === 'test') {
+    return { success: true, messageId: 'test-message-id' };
+  }
+
   try {
     const info = await transporter.sendMail({
       from: process.env.EMAIL_FROM || `"Dress by Ameksa" <${process.env.EMAIL_USER}>`,
