@@ -1,7 +1,5 @@
-const { Client, handle_file } = require('@gradio/client');
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
+const { GoogleGenAI } = require('@google/genai');
+const { Client } = require('@gradio/client');
 
 const COULEUR_PEAU_LABELS = {
   tres_claire: 'very pale white European skin',
@@ -20,11 +18,91 @@ const MORPHOLOGIE_DESCRIPTIONS = {
   ronde: 'curvy full-figured body with a soft rounded silhouette',
 };
 
-// IDM-VTON space
-const TRYON_SPACE = 'yisol/IDM-VTON';
+// Download image from URL and return as base64
+const downloadImageAsBase64 = (url) => {
+  return new Promise((resolve, reject) => {
+    const client = url.startsWith('https') ? require('https') : require('http');
+    client.get(url, (res) => {
+      if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+        return downloadImageAsBase64(res.headers.location).then(resolve).catch(reject);
+      }
+      const chunks = [];
+      res.on('data', (chunk) => chunks.push(chunk));
+      res.on('end', () => {
+        const buffer = Buffer.concat(chunks);
+        resolve(buffer.toString('base64'));
+      });
+      res.on('error', reject);
+    }).on('error', reject);
+  });
+};
 
-// Build prompt for person generation
-const buildPersonPrompt = (morphData) => {
+// Download image from URL and return as Blob (for Gradio)
+const downloadImageAsBlob = async (url) => {
+  const base64 = await downloadImageAsBase64(url);
+  const buffer = Buffer.from(base64, 'base64');
+  return new Blob([buffer], { type: 'image/jpeg' });
+};
+
+// Step 1: Use Gemini (free text model) to generate an optimized prompt
+const generatePromptWithGemini = async (tenue, morphData) => {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    console.log('  No Gemini API key, using fallback prompt');
+    return buildFallbackPrompt(tenue, morphData);
+  }
+
+  const { taille, poids, couleurPeau, morphologie } = morphData;
+  const skinDesc = COULEUR_PEAU_LABELS[couleurPeau] || couleurPeau;
+  const morphDesc = MORPHOLOGIE_DESCRIPTIONS[morphologie] || morphologie;
+
+  const bmi = poids / ((taille / 100) ** 2);
+  let bodyBuild = 'average build';
+  if (bmi < 18.5) bodyBuild = 'slim slender build';
+  else if (bmi < 25) bodyBuild = 'fit proportionate build';
+  else if (bmi < 30) bodyBuild = 'curvy full build';
+  else bodyBuild = 'plus-size voluptuous build';
+
+  const heightDesc = taille < 155 ? 'petite (short)' : taille < 170 ? 'medium height' : 'tall';
+
+  const ai = new GoogleGenAI({ apiKey });
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.0-flash',
+      contents: [{
+        role: 'user',
+        parts: [{
+          text: `You are a fashion photography prompt engineer. Generate a concise, detailed prompt for an AI image generator to create a photo of a woman model.
+
+The woman should be:
+- ${heightDesc}, ${bodyBuild}
+- ${skinDesc}
+- ${morphDesc}
+- Standing in a natural elegant pose, facing the camera
+- Professional fashion photography setting
+
+IMPORTANT: Do NOT describe any clothing or dress. The woman should be wearing a simple plain white t-shirt and plain beige pants. The virtual try-on AI will overlay the real dress later.
+
+Output ONLY the prompt text, nothing else. Keep it under 100 words. Focus on the woman's physical appearance, pose, lighting, and background.`
+        }]
+      }]
+    });
+
+    const prompt = response.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+    if (prompt) {
+      console.log('  Gemini generated prompt:', prompt.substring(0, 150) + '...');
+      return prompt;
+    }
+  } catch (error) {
+    console.error('  Gemini prompt generation failed:', error.message);
+  }
+
+  return buildFallbackPrompt(tenue, morphData);
+};
+
+// Fallback prompt if Gemini is unavailable
+const buildFallbackPrompt = (tenue, morphData) => {
   const { taille, poids, couleurPeau, morphologie } = morphData;
   const skinDesc = COULEUR_PEAU_LABELS[couleurPeau] || couleurPeau;
   const morphDesc = MORPHOLOGIE_DESCRIPTIONS[morphologie] || morphologie;
@@ -38,169 +116,142 @@ const buildPersonPrompt = (morphData) => {
 
   const heightDesc = taille < 155 ? 'petite' : taille < 170 ? 'medium height' : 'tall';
 
-  return `Full body photo of a beautiful ${heightDesc} woman with ${skinDesc}, ${bodyBuild}, ${morphDesc}. She is wearing a simple plain white fitted tank top and white fitted pants. Standing straight facing the camera with arms slightly at her sides. Clean white studio background. Professional fashion photography, sharp focus, well lit, 8k quality.`;
+  return `A beautiful ${heightDesc} woman with ${skinDesc}, ${bodyBuild}, ${morphDesc}. She is wearing a simple plain white t-shirt and plain beige pants. Standing elegantly facing the camera. Professional fashion photography, soft studio lighting, clean neutral background. Full body shot, high quality, 8k resolution.`;
 };
 
-// Generate person image with FLUX
-const generateWithFlux = async (prompt) => {
-  const HF_TOKEN = process.env.HF_API_TOKEN;
-  const response = await fetch(
-    'https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell',
-    {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${HF_TOKEN}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ inputs: prompt }),
-    }
-  );
+// Step 2: Use FLUX on HuggingFace to generate the person image
+const generatePersonImage = async (prompt) => {
+  const FLUX_SPACES = [
+    'black-forest-labs/FLUX.1-schnell',
+    'black-forest-labs/FLUX.1-dev',
+  ];
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`FLUX error (${response.status}): ${errorText}`);
-  }
+  let lastError = null;
 
-  const arrayBuffer = await response.arrayBuffer();
-  return Buffer.from(arrayBuffer);
-};
+  for (const spaceName of FLUX_SPACES) {
+    try {
+      console.log(`  Trying FLUX space: ${spaceName}`);
+      const app = await Client.connect(spaceName);
 
-// Download image from URL (follows redirects)
-const downloadImage = (url) => {
-  return new Promise((resolve, reject) => {
-    const client = url.startsWith('https') ? require('https') : require('http');
-    client.get(url, (res) => {
-      if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
-        return downloadImage(res.headers.location).then(resolve).catch(reject);
+      const result = await app.predict('/infer', {
+        prompt: prompt,
+        seed: 0,
+        randomize_seed: true,
+        width: 768,
+        height: 1024,
+        num_inference_steps: 4,
+      });
+
+      if (result?.data?.[0]?.url) {
+        const imageUrl = result.data[0].url;
+        console.log('  Person image generated with FLUX');
+        const base64 = await downloadImageAsBase64(imageUrl);
+        return { base64, url: imageUrl };
       }
-      const chunks = [];
-      res.on('data', (chunk) => chunks.push(chunk));
-      res.on('end', () => resolve(Buffer.concat(chunks)));
-      res.on('error', reject);
-    }).on('error', reject);
-  });
-};
 
-// Save buffer to temp file and return path
-const saveToTempFile = (buffer, filename) => {
-  const tmpDir = os.tmpdir();
-  const filePath = path.join(tmpDir, `tryon_${Date.now()}_${filename}`);
-  fs.writeFileSync(filePath, buffer);
-  return filePath;
-};
+      console.log(`  ${spaceName}: no image in response`);
+      lastError = new Error('No image in FLUX response');
+    } catch (error) {
+      console.error(`  ${spaceName} failed:`, error.message?.substring(0, 200));
+      lastError = error;
 
-// Clean up temp files
-const cleanupFiles = (...files) => {
-  for (const f of files) {
-    try { fs.unlinkSync(f); } catch { /* ignore */ }
-  }
-};
-
-// Call IDM-VTON via @gradio/client
-const virtualTryOn = async (personBuffer, garmentBuffer, hfToken, garmentDesc) => {
-  // Save buffers to temp files (gradio client needs file paths)
-  const personPath = saveToTempFile(personBuffer, 'person.jpg');
-  const garmentPath = saveToTempFile(garmentBuffer, 'garment.jpg');
-
-  const errors = [];
-
-  try {
-    for (const spaceName of [TRYON_SPACE]) {
-      try {
-        console.log(`  Trying space: ${spaceName}`);
-
-        const client = await Client.connect(spaceName, {
-          hf_token: hfToken,
-        });
-
-        const result = await client.predict('/tryon', {
-          dict: {
-            background: handle_file(personPath),
-            layers: [],
-            composite: null,
-          },
-          garm_img: handle_file(garmentPath),
-          garment_des: garmentDesc,
-          is_checked: true,
-          is_checked_crop: false,
-          denoise_steps: 30,
-          seed: 42,
-        });
-
-        console.log(`  Result received from ${spaceName}`);
-
-        // result.data[0] is the output image (filepath or URL)
-        const outputImage = result.data[0];
-
-        if (outputImage?.url) {
-          // Download from URL
-          console.log(`  Downloading result from: ${outputImage.url}`);
-          const resultBuffer = await downloadImage(outputImage.url);
-          return resultBuffer;
-        } else if (outputImage?.path) {
-          // Read from local path
-          const resultBuffer = fs.readFileSync(outputImage.path);
-          return resultBuffer;
-        } else if (typeof outputImage === 'string') {
-          // Could be a file path or URL
-          if (outputImage.startsWith('http')) {
-            const resultBuffer = await downloadImage(outputImage);
-            return resultBuffer;
-          } else {
-            const resultBuffer = fs.readFileSync(outputImage);
-            return resultBuffer;
-          }
-        }
-
-        throw new Error('Unexpected result format from IDM-VTON');
-      } catch (err) {
-        console.error(`  Space ${spaceName} failed: ${err.message}`);
-        errors.push(`${spaceName}: ${err.message}`);
+      // Continue to next space instead of throwing immediately
+      if (error.message?.includes('Queue is full')) {
+        continue;
       }
     }
-
-    const allErrors = errors.join('\n');
-    if (allErrors.toLowerCase().includes('quota')) {
-      const err = new Error('QUOTA_EXCEEDED');
-      err.isQuota = true;
-      throw err;
-    }
-    throw new Error(`All try-on spaces failed:\n${allErrors}`);
-  } finally {
-    cleanupFiles(personPath, garmentPath);
   }
+
+  // If all spaces failed due to quota, throw quota error
+  if (lastError?.message?.includes('exceeded your GPU quota')) {
+    const err = new Error('QUOTA_EXCEEDED');
+    err.isQuota = true;
+    throw err;
+  }
+
+  throw lastError || new Error('FLUX generation failed');
 };
 
-// Main function: generate person + virtual try-on with the exact dress image
+// Step 3: Use IDM-VTON to apply the real dress on the person
+const applyDressWithVTON = async (personBase64, dressImageUrl) => {
+  const VTON_SPACES = [
+    'yisol/IDM-VTON',
+    'BachNgoworking/IDM-VTON',
+  ];
+
+  const dressBlob = await downloadImageAsBlob(dressImageUrl);
+  const personBuffer = Buffer.from(personBase64, 'base64');
+  const personBlob = new Blob([personBuffer], { type: 'image/png' });
+
+  let lastError = null;
+
+  for (const spaceName of VTON_SPACES) {
+    try {
+      console.log(`  Trying VTON space: ${spaceName}`);
+      const app = await Client.connect(spaceName);
+
+      const result = await app.predict('/tryon', {
+        dict: {
+          background: personBlob,
+          layers: [],
+          composite: null,
+        },
+        garm_img: dressBlob,
+        garment_des: 'Traditional Moroccan dress, elegant formal wear',
+        is_checked: true,
+        is_checked_crop: false,
+        denoise_steps: 30,
+        seed: 42,
+      });
+
+      if (result?.data?.[0]?.url) {
+        console.log('  VTON applied dress successfully!');
+        const finalBase64 = await downloadImageAsBase64(result.data[0].url);
+        return finalBase64;
+      }
+
+      console.log(`  ${spaceName}: no image in response`);
+      lastError = new Error('No image in VTON response');
+    } catch (error) {
+      console.error(`  ${spaceName} failed:`, error.message?.substring(0, 200));
+      lastError = error;
+
+      if (error.message?.includes('exceeded your GPU quota') ||
+          error.message?.includes('Queue is full')) {
+        const err = new Error('QUOTA_EXCEEDED');
+        err.isQuota = true;
+        throw err;
+      }
+    }
+  }
+
+  throw lastError || new Error('VTON application failed');
+};
+
+// Main function: 3-step pipeline
 const generateTryOnImage = async (tenue, morphData) => {
-  const HF_TOKEN = process.env.HF_API_TOKEN;
-  if (!HF_TOKEN) {
-    throw new Error('HF_API_TOKEN non configure dans .env');
-  }
-
   const dressImageUrl = tenue.images?.[0]?.url;
   if (!dressImageUrl) {
-    throw new Error('Cette tenue n\'a pas d\'image');
+    throw new Error("Cette tenue n'a pas d'image");
   }
 
-  console.log('Step 1: Generating person image with FLUX...');
-  const personPrompt = buildPersonPrompt(morphData);
-  const personBuffer = await generateWithFlux(personPrompt);
-  console.log(`  Person image generated (${personBuffer.length} bytes)`);
+  // Step 1: Gemini generates an optimized prompt (free text model)
+  console.log('Step 1: Generating optimized prompt with Gemini...');
+  const prompt = await generatePromptWithGemini(tenue, morphData);
 
-  console.log('Step 2: Downloading dress image...');
-  const dressBuffer = await downloadImage(dressImageUrl);
-  console.log(`  Dress image downloaded (${dressBuffer.length} bytes)`);
+  // Step 2: FLUX generates a person mannequin
+  console.log('Step 2: Generating person mannequin with FLUX...');
+  const personImage = await generatePersonImage(prompt);
 
-  console.log('Step 3: Virtual try-on with IDM-VTON...');
-  const garmentDesc = tenue.description || (tenue.nom ? `${tenue.nom}, traditional Moroccan dress` : 'Traditional Moroccan dress');
-  const resultBuffer = await virtualTryOn(personBuffer, dressBuffer, HF_TOKEN, garmentDesc);
-  console.log(`  Try-on result generated (${resultBuffer.length} bytes)`);
+  // Step 3: IDM-VTON applies the REAL dress on the person
+  console.log('Step 3: Applying real dress with IDM-VTON...');
+  const finalImageBase64 = await applyDressWithVTON(personImage.base64, dressImageUrl);
 
+  console.log('Pipeline complete!');
   return {
-    imageBase64: resultBuffer.toString('base64'),
+    imageBase64: finalImageBase64,
     mimeType: 'image/png',
-    prompt: personPrompt,
+    prompt,
   };
 };
 
